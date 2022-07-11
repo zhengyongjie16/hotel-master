@@ -1,0 +1,22 @@
+.logo {
+    height: 64px;
+    margin: 16px;
+    background: url(../../assets/logo.png);
+    background-size: 100% 100%;
+    margin:0 0
+  }
+  
+  .site-layout  {
+    background: rgb(234, 233, 233);
+  }
+
+  .site-layout-background{
+    background: #fff;
+  }
+
+  .site-layout-background-top{
+    background: #001529;
+  }
+    [data-theme="dark"] .site-layout .site-layout-background {
+      background: #141414;
+    }
