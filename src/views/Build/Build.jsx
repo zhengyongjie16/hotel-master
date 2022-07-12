@@ -4,6 +4,7 @@ import { Button, Modal, Input, notification, message } from 'antd';
 import 'antd/dist/antd.css';
 import _ from 'lodash'  // 国际惯例 一般使用lodash的库 引入的变量名是 _
 import './Build.scss'
+import Header from '../../components/layout/Header';
 import { changeConfirmLocale } from 'antd/lib/modal/locale';
 
 
@@ -209,6 +210,7 @@ const Build = () => {
 
     return (
         <>
+          <Header title='楼栋楼层管理'/>
             <div className="howmuch" style={{ marginBottom: "20px", fontSize: "20px" }}> 一共有 <span style={{ color: 'blue' }}>{total}</span> 栋楼</div>
             <div className="buildList">
                 {
@@ -237,7 +239,7 @@ const Build = () => {
                 </div>
 
                 {/******** 指定楼栋的 楼层信息 **********/}
-                <div className={ hide == true? 'hide':''}>
+                <div className={ hide == true? 'hide':'floorList'}>
                     {
                         curBuild.floorInfo?.map((item, index) => (
                             <div key={item} onDoubleClick={ev => {
