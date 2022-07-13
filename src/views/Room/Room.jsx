@@ -55,6 +55,8 @@ const Room = () => {
 
     const onClose = () => {
         setVisible(false);
+        ///修改和删除通用
+        setVi(false)
     };
     ///////////////////////////////            抽屉对应布局结束            ///////////////////////////////////
 
@@ -164,9 +166,11 @@ const Room = () => {
     });
     ////////////////////        声明状态以获取行id ****
     const [rowid, setRowid] = useState()
+    ////////////////////        声明状态以获取行行数据 ****
+    const [row, setRow] = useState()
 
+    ////////////////////     设置列
     const columns = [
-
         {
             title: '房型名称',
             dataIndex: 'name',
@@ -217,7 +221,11 @@ const Room = () => {
             // 通过record参数获取该行数据，详见antd-Table-render API
             render: (_, record) =>
                 <>
-                    <a style={{ marginRight: '15px' }}>修改</a>
+                    <a style={{ marginRight: '15px' }} onClick={()=>{
+                             openEdit()
+                             setRow(record)
+                    }
+                    }>修改</a>
                     <a onClick={() => {
                         setRowid(record._id)
                         showModal()
@@ -255,6 +263,30 @@ const Room = () => {
     //////////////////  删除弹出层相关控制状态结束
 
 
+
+    ///////////////////  修改弹出层相关控制状态开始
+    const [vi, setVi] = useState(false);
+    //const [vis, setVis] = useState(false);
+
+    const shModal = () => {
+        setVi(true);
+    };
+
+    /* const stDel = () => {
+        setVis(true)
+    } */
+
+    const handOk = () => {
+        setVi(false);
+    };
+
+    const hCancel = () => {
+        setVi(false);
+    };
+    //////////////////  修改弹出层相关控制状态结束
+
+
+
     ///////////////////////////////删除            删除 房型开始             删除///////////////////////////////////
     const confirmDel = async (id) => {
         let res = await delType({ typeid: id });
@@ -273,8 +305,8 @@ const Room = () => {
     const [listadd,setListadd] = useState()
     console.log('listadd',listadd)
     const handleAdd  = async ()=>{
-        /* const okornot = await formRef.current.validate() // 表单验证 通过的话返回true
-        if(okornot !== true) return ; */
+        const okornot = await formRef.current.validate() // 表单验证 通过的话返回true 
+        if(okornot !== true) return ; 
         const values = listadd; // 得到所有的表单的值
         //console.log('values',values)
         let res = await addType(values);
@@ -291,12 +323,12 @@ const Room = () => {
 
     const [showEdit,setShowEdit] = useState(false);
     const editRef = useRef(null);
-    const [curRow,setCurRow] = useState(null)
-    const openEdit = (row)=>{
-        setCurRow(row)
+    //const [curRow,setCurRow] = useState(null)
+    const openEdit = ()=>{
+        //setCurRow(row)
         // 设置 修改表单的内容
         editRef.current.setFieldsValue(row)
-        setShowEdit(true); //  让修改抽屉弹出
+        shModal(); //  让修改抽屉弹出
     }
     const handleEdit   = async ()=>{
         const okornot = await editRef.current.validate() // 表单验证 通过的话返回true
@@ -365,6 +397,7 @@ const Room = () => {
                             <Form.Item
                                 name="name"
                                 label="房型名称"
+                                required={true}
                                 rules={[
                                     {
                                         required: true,
@@ -453,7 +486,7 @@ const Room = () => {
                 title="修改该房型"
                 width={620}
                 onClose={onClose}
-                //visible={visible}
+                visible={vi}
                 bodyStyle={{
                     paddingBottom: 80,
                 }}
@@ -466,14 +499,14 @@ const Room = () => {
                         <Button onClick={()=>{
                             reset()
                             onClose()
-                            handleAdd()
+                            //handleAdd()
                             }} type="primary">
                             立即修改
                         </Button>
                     </Space>
                 }
             >
-                <Form layout="vertical" hideRequiredMark ref={formRef} /* onFinish={(values)=>console.log('values',values)} */
+                <Form layout="vertical" hideRequiredMark ref={editRef} /* onFinish={(values)=>console.log('values',values)} */
                 onValuesChange={(changedValues, allValues) =>{
                     console.log(111111,changedValues, allValues)
                     setListadd(allValues)
@@ -564,7 +597,7 @@ const Room = () => {
 
 
 
-            {/*楼栋删除 删除确认的对话框 */}
+            {/*房型删除 删除确认的对话框 */}
 
             <Modal
                 title="警告"
