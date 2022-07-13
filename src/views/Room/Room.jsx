@@ -168,6 +168,7 @@ const Room = () => {
     const [rowid, setRowid] = useState()
     ////////////////////        声明状态以获取行行数据 ****
     const [row, setRow] = useState()
+    console.log('row',row)
 
     ////////////////////     设置列
     const columns = [
@@ -183,7 +184,6 @@ const Room = () => {
             dataIndex: 'beds',
             key: 'beds',
             width: '12.5%',
-            ...getColumnSearchProps('beds'),
         },
         {
             title: '价格',
@@ -197,21 +197,18 @@ const Room = () => {
             dataIndex: 'yaPrice',
             key: 'yaPrice',
             width: '12.5%',
-            ...getColumnSearchProps('yaPrice'),
         },
         {
             title: '入住人数',
             dataIndex: 'liveLimit',
             key: 'liveLimit',
             width: '12.5%',
-            ...getColumnSearchProps('liveLimit'),
         },
         {
             title: '早餐券数量',
             dataIndex: 'couponNum',
             key: 'couponNum',
             width: '12.5%',
-            ...getColumnSearchProps('couponNum'),
         },
         {
             title: '操作',
@@ -223,7 +220,7 @@ const Room = () => {
                 <>
                     <a style={{ marginRight: '15px' }} onClick={()=>{
                              openEdit()
-                             setRow(record)
+                             detRow(record)
                     }
                     }>修改</a>
                     <a onClick={() => {
@@ -301,12 +298,17 @@ const Room = () => {
     const reset = ()=>{
 		formRef.current.resetFields();
 	}
+
+    const dreset = ()=>{
+		editRef.current.resetFields();
+	}
     const formRef = useRef(null)
     const [listadd,setListadd] = useState()
     console.log('listadd',listadd)
     const handleAdd  = async ()=>{
-        const okornot = await formRef.current.validate() // 表单验证 通过的话返回true 
-        if(okornot !== true) return ; 
+        // console.log(111111111,formRef.current.validate())
+        // const whether = await formRef.current.validate() // 表单验证 通过的话返回true 
+        // if(whether !== true) return ; 
         const values = listadd; // 得到所有的表单的值
         //console.log('values',values)
         let res = await addType(values);
@@ -325,14 +327,14 @@ const Room = () => {
     const editRef = useRef(null);
     //const [curRow,setCurRow] = useState(null)
     const openEdit = ()=>{
-        //setCurRow(row)
+        const detRow =
         // 设置 修改表单的内容
         editRef.current.setFieldsValue(row)
         shModal(); //  让修改抽屉弹出
     }
     const handleEdit   = async ()=>{
-        const okornot = await editRef.current.validate() // 表单验证 通过的话返回true
-        if(okornot !== true) return ;
+        const ok = await editRef.current.validate() // 表单验证 通过的话返回true
+        if(ok !== true) return ;
         const values = editRef.current.getFieldsValue(true); // 得到所有的表单的值
         // 发送请求执行修改
         let res = await editType({
@@ -397,7 +399,6 @@ const Room = () => {
                             <Form.Item
                                 name="name"
                                 label="房型名称"
-                                required={true}
                                 rules={[
                                     {
                                         required: true,
@@ -494,12 +495,12 @@ const Room = () => {
                     <Space>
                         <Button onClick={()=>{
                             onClose()
-                            reset()
+                            dreset()
                         }}>取消</Button>
                         <Button onClick={()=>{
-                            reset()
+                            dreset()
                             onClose()
-                            //handleAdd()
+                            handleEdit()
                             }} type="primary">
                             立即修改
                         </Button>
