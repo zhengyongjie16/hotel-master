@@ -229,7 +229,7 @@ const Room = () => {
     ];
 
 
-    console.log(rowid)
+    //console.log(rowid)
     ///////////////////////////////            表单布局结束             ///////////////////////////////////
 
 
@@ -266,19 +266,55 @@ const Room = () => {
     ///////////////////////////////删除            删除 房型结束             删除///////////////////////////////////
 
     ///////////////////////////////添加            添加 房型开始             添加///////////////////////////////////
-    const handleAdd   = async ()=>{
-        const okornot = await formRef.current.validate() // 表单验证 通过的话返回true
-        if(okornot !== true) return ;
-        const values = formRef.current.getFieldsValue(true); // 得到所有的表单的值
-        console.log('values',values)
+    const reset = ()=>{
+		formRef.current.resetFields();
+	}
+    const formRef = useRef(null)
+    const [listadd,setListadd] = useState()
+    console.log('listadd',listadd)
+    const handleAdd  = async ()=>{
+        /* const okornot = await formRef.current.validate() // 表单验证 通过的话返回true
+        if(okornot !== true) return ; */
+        const values = listadd; // 得到所有的表单的值
+        //console.log('values',values)
         let res = await addType(values);
         const { success } = res;
         if(!success) return message.error('添加失败');
         message.success('添加成功');
         getData(); // 刷新表格
-        formRef.current.reset(); // 重置表单
+        //formRef.current.reset(); // 重置表单
     }
     ///////////////////////////////添加            添加 房型结束            添加///////////////////////////////////
+
+
+    ///////////////////////////////修改            修改 房型开始             修改///////////////////////////////////
+
+    const [showEdit,setShowEdit] = useState(false);
+    const editRef = useRef(null);
+    const [curRow,setCurRow] = useState(null)
+    const openEdit = (row)=>{
+        setCurRow(row)
+        // 设置 修改表单的内容
+        editRef.current.setFieldsValue(row)
+        setShowEdit(true); //  让修改抽屉弹出
+    }
+    const handleEdit   = async ()=>{
+        const okornot = await editRef.current.validate() // 表单验证 通过的话返回true
+        if(okornot !== true) return ;
+        const values = editRef.current.getFieldsValue(true); // 得到所有的表单的值
+        // 发送请求执行修改
+        let res = await editType({
+            ...values,
+            typeid:curRow._id
+        });
+        const { success } = res;
+        if(!success) return message.error('修改失败');
+        message.success('修改成功');
+        getData(); // 刷新表格
+    }
+
+    ///////////////////////////////修改            修改 房型结束            修改///////////////////////////////////
+
 
 
 
@@ -303,8 +339,12 @@ const Room = () => {
                 }}
                 extra={
                     <Space>
-                        <Button onClick={onClose}>取消</Button>
                         <Button onClick={()=>{
+                            onClose()
+                            reset()
+                        }}>取消</Button>
+                        <Button onClick={()=>{
+                            reset()
                             onClose()
                             handleAdd()
                             }} type="primary">
@@ -313,7 +353,12 @@ const Room = () => {
                     </Space>
                 }
             >
-                <Form layout="vertical" hideRequiredMark ref={formRef}>
+                <Form layout="vertical" hideRequiredMark ref={formRef} /* onFinish={(values)=>console.log('values',values)} */
+                onValuesChange={(changedValues, allValues) =>{
+                    console.log(111111,changedValues, allValues)
+                    setListadd(allValues)
+                }
+                    }>
 
                     <Row gutter={16}>
                         <Col span={12}>
@@ -327,7 +372,7 @@ const Room = () => {
                                     },
                                 ]}
                             >
-                                <Input placeholder="请输入一个房型名称" />
+                                <Input allowClear={true} placeholder="请输入一个房型名称" />
                             </Form.Item>
                         </Col>
                     </Row>
@@ -344,7 +389,7 @@ const Room = () => {
                                     },
                                 ]}
                             >
-                                <Input placeholder="请输入一个价格" />
+                                <Input allowClear={true} placeholder="请输入一个价格" />
                             </Form.Item>
                         </Col>
                     </Row>
@@ -355,7 +400,7 @@ const Room = () => {
                                 name="yaPrice"
                                 label="押金"
                             >
-                                <Input placeholder="请输入押金" />
+                                <Input allowClear={true} placeholder="请输入押金" />
                             </Form.Item>
                         </Col>
                     </Row>
@@ -399,6 +444,126 @@ const Room = () => {
 
 
 
+
+
+
+
+            {/* ///////////////////////////////            修改房型抽屉渲染开始             /////////////////////////////////// */}
+            <Drawer
+                title="修改该房型"
+                width={620}
+                onClose={onClose}
+                //visible={visible}
+                bodyStyle={{
+                    paddingBottom: 80,
+                }}
+                extra={
+                    <Space>
+                        <Button onClick={()=>{
+                            onClose()
+                            reset()
+                        }}>取消</Button>
+                        <Button onClick={()=>{
+                            reset()
+                            onClose()
+                            handleAdd()
+                            }} type="primary">
+                            立即修改
+                        </Button>
+                    </Space>
+                }
+            >
+                <Form layout="vertical" hideRequiredMark ref={formRef} /* onFinish={(values)=>console.log('values',values)} */
+                onValuesChange={(changedValues, allValues) =>{
+                    console.log(111111,changedValues, allValues)
+                    setListadd(allValues)
+                }
+                    }>
+
+                    <Row gutter={16}>
+                        <Col span={12}>
+                            <Form.Item
+                                name="name"
+                                label="房型名称"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: '房型名称不能为空',
+                                    },
+                                ]}
+                            >
+                                <Input allowClear={true} placeholder="请输入一个房型名称" />
+                            </Form.Item>
+                        </Col>
+                    </Row>
+
+                    <Row gutter={16}>
+                        <Col span={12}>
+                            <Form.Item
+                                name="price"
+                                label="价格"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: '价格不能为空',
+                                    },
+                                ]}
+                            >
+                                <Input allowClear={true} placeholder="请输入一个价格" />
+                            </Form.Item>
+                        </Col>
+                    </Row>
+
+                    <Row gutter={16}>
+                        <Col span={12}>
+                            <Form.Item
+                                name="yaPrice"
+                                label="押金"
+                            >
+                                <Input allowClear={true} placeholder="请输入押金" />
+                            </Form.Item>
+                        </Col>
+                    </Row>
+
+                    <Row gutter={16}>
+                        <Col span={12}>
+                            <Form.Item
+                                name="beds"
+                                label="床数量"
+                            >
+                                <InputNumber min={1} max={10} defaultValue={1} style={{ width: '100px' }} />
+                            </Form.Item>
+                        </Col>
+                    </Row>
+
+                    <Row gutter={16}>
+                        <Col span={12}>
+                            <Form.Item
+                                name="liveLimit"
+                                label="入住人数"
+                            >
+                                <InputNumber min={1} max={10} defaultValue={1} style={{ width: '100px' }} />
+                            </Form.Item>
+                        </Col>
+                    </Row>
+
+                    <Row gutter={16}>
+                        <Col span={12}>
+                            <Form.Item
+                                name="couponNum"
+                                label="早餐券数量"
+                            >
+                                <InputNumber min={1} max={10} defaultValue={1} style={{ width: '100px' }} />
+                            </Form.Item>
+                        </Col>
+                    </Row>
+
+                </Form>
+            </Drawer>
+            {/* ///////////////////////////////            修改房型抽屉渲染结束             /////////////////////////////////// */}
+
+
+
             {/*楼栋删除 删除确认的对话框 */}
 
             <Modal
@@ -406,15 +571,12 @@ const Room = () => {
                 visible={visi}
                 onOk={() => {
                     handleOk()
-                    //console.log('data._id',data.id)
                     confirmDel(rowid)
                 }}
                 onCancel={handleCancel}
             >
                 <p>删除后不可恢复，是否确认删除</p>
             </Modal>
-
-
 
         </>
     );
