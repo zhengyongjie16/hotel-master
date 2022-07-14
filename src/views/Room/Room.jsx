@@ -220,7 +220,7 @@ const Room = () => {
                 <>
                     <a style={{ marginRight: '15px' }} onClick={()=>{
                              openEdit()
-                             detRow(record)
+                             setRow(record)
                     }
                     }>修改</a>
                     <a onClick={() => {
@@ -304,11 +304,15 @@ const Room = () => {
 	}
     const formRef = useRef(null)
     const [listadd,setListadd] = useState()
-    console.log('listadd',listadd)
+    //console.log('listadd',listadd)
     const handleAdd  = async ()=>{
-        // console.log(111111111,formRef.current.validate())
+
+        /////表单验证
+        // console.log('current',formRef.current)
         // const whether = await formRef.current.validate() // 表单验证 通过的话返回true 
         // if(whether !== true) return ; 
+
+        //////添加操作
         const values = listadd; // 得到所有的表单的值
         //console.log('values',values)
         let res = await addType(values);
@@ -326,10 +330,10 @@ const Room = () => {
     const [showEdit,setShowEdit] = useState(false);
     const editRef = useRef(null);
     //const [curRow,setCurRow] = useState(null)
-    const openEdit = ()=>{
-        const detRow =
+    const openEdit = async ()=>{
+
         // 设置 修改表单的内容
-        editRef.current.setFieldsValue(row)
+        await editRef.current.setFieldsValue(row)
         shModal(); //  让修改抽屉弹出
     }
     const handleEdit   = async ()=>{
@@ -389,7 +393,7 @@ const Room = () => {
             >
                 <Form layout="vertical" hideRequiredMark ref={formRef} /* onFinish={(values)=>console.log('values',values)} */
                 onValuesChange={(changedValues, allValues) =>{
-                    console.log(111111,changedValues, allValues)
+                    console.log('添加表单',changedValues, allValues)
                     setListadd(allValues)
                 }
                     }>
@@ -509,7 +513,7 @@ const Room = () => {
             >
                 <Form layout="vertical" hideRequiredMark ref={editRef} /* onFinish={(values)=>console.log('values',values)} */
                 onValuesChange={(changedValues, allValues) =>{
-                    console.log(111111,changedValues, allValues)
+                    console.log('修改表单',changedValues, allValues)
                     setListadd(allValues)
                 }
                     }>

@@ -233,7 +233,7 @@ const Build = () => {
 
                 {/* 楼栋的基本信息 */}
                 <div style={{ fontSize: '20px' }}>
-                    当前楼栋：<span style={{ color: 'blue' }}>{curBuild.name}</span> 共 {curBuild.floorInfo ? curBuild.floorInfo.length : 0} 层 
+                    当前楼栋：<span style={{ color: 'blue' }}>{curBuild.name}</span> 共 <span style={{ color: 'blue' }}>{curBuild.floorInfo ? curBuild.floorInfo.length : 0}</span> 层 
                     <Button shape="round" size="small" style={{ marginLeft: '15px' }} type='primary' onClick={() => setShowEditBox(true)}>修改</Button>
                     <Button shape="round" size="small" style={{ marginLeft: '15px' }} type='primary' onClick={showDel}>删除</Button>
                 </div>

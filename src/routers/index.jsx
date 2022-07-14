@@ -5,7 +5,7 @@ import Home from '../views/Home/Home';
 import Layout from '../components/layout/index'
 import Build from '../views/Build/Build'
 import Room from "../views/Room/Room";
-//import Go from '../views/Go/Go'
+import Go from '../views/Go/Go'
 // 原来的引入方法  这样引入会把所有的组件都打包到一个文件当中 会导致文件越来越大 首次加载的时候
 // 会把很多不会立即使用到的组件也一并加载了
 // import Room from "../views/Room/Room";
@@ -22,7 +22,7 @@ import Room from "../views/Room/Room";
 // 独立页面
 const frameOut = [
   { path: '/login', element: <Login />  },
-  //{ path: '/go', element: <Go />}
+  { path: '/go', element: <Go />}
 ]
 
 
