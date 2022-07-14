@@ -46,8 +46,12 @@ const items = [
         key:'3',
       },
       {
-        label:<Link to="/setroom">房型管理</Link>,
+        label:<Link to="/setroom">房型维护</Link>,
         key:'4',
+      },
+      {
+        label:<Link to="/roomlist">房间管理</Link>,
+        key:'5',
       },
     ]
   }

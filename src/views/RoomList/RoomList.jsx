@@ -1,49 +1,98 @@
 import Header from "../../components/layout/Header";
 import React, { useRef, useState, useMemo, useContext, useEffect, useLayoutEffect } from 'react';
-import { getAllType, addType, delType, editType } from '../../api/roomType';
+import { getAllRoom, delRoom, addRoom, editRoom } from '../../api/room'
+import { getAllBuild } from "../../api/build";
+import { getAllType } from "../../api/roomType";
 import 'antd/dist/antd.css';
-import './Room.css';
+import './RoomList.css';
 import { SearchOutlined } from '@ant-design/icons';
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, Input, Space, Table, Col, DatePicker, Drawer, Form, Row, Select, InputNumber, Modal, message } from 'antd';
+import {
+    Button,
+    Input,
+    Space,
+    Table,
+    Col,
+    Drawer,
+    Form,
+    Row,
+    Select,
+    InputNumber,
+    Modal,
+    message,
+    Tag,
+    Cascader,
+    Radio
+} from 'antd';
 
 import Highlighter from 'react-highlight-words';
 const { Option } = Select;
 
 
-const Room = () => {
+const RoomList = () => {
 
-    const [datalist, setDatalist] = useState([]);
-    const [limit, setLimit] = useState(10);  // 单页数量
+    //////////// 获取全部的楼栋信息  ///////////////////////////
+    const [build, setBuild] = useState([])
+    const getBuild = async () => {
+        let res = await getAllBuild({});
+        console.log('res', res)
+        // 实际开发过程当中 得到的数据格式不一定符合我们的要求
+        // 我们需要处理成我们要用的数据格式
+        const temarr = res.data.map(item => ({
+            label: item.name,
+            value: item._id,
+            children: item.floorInfo.map(it => ({ label: it, value: it }))
+        }))
+        setBuild(temarr)
+    }
+    useEffect(() => {
+        getBuild();  // 获取楼栋信息
+    }, [])
+
+
+    // 获取全部的房型
+
+    const [type, setType] = useState([]);
+    const getTypes = async () => {
+        const res = await getAllType({ limit: 2000 });
+        setType(res.data.map(item => ({ label: item.name, value: item._id })))
+    }
+    useEffect(() => {
+        getTypes();  // 获取全部的房型信息
+    }, [])
+
+
+
+
+
+    const [datalist, setData] = useState([]);
+    const [limit, setLimit] = useState(30);  // 单页数量
     const [page, setPage] = useState(1);
     const [total, setTotal] = useState(0); // 总数
-
-    // 获取表格数据的主函数
+    /////////// 获取表格数据的主函数
     const getData = async () => {
         const postData = { limit, page };
         if (name) postData.name = name;
         if (price) postData.price = price;
 
-        let res = await getAllType(postData)
+        let res = await getAllRoom(postData)
         const { success, data, count } = res;
         if (success) {
-            setDatalist(data);
+            setData(data);
             setTotal(count)
         };
     }
-
-    //console.log('data',data)
+    console.log('data', datalist)
 
     // 条件过滤
     const [name, setName] = useState('');
     const [price, setPrice] = useState('')
 
-    //开局获取数据
-    useLayoutEffect(() => {
-        getData();
-    }, [limit, page])
 
-    console.log('datalist', datalist)
+    useLayoutEffect(() => {
+        getData(); // 获取表格数据
+
+    }, [limit, page])
 
 
     ///////////////////////////////            抽屉对应布局开始             ///////////////////////////////////
@@ -167,47 +216,63 @@ const Room = () => {
     ////////////////////        声明状态以获取行id ****
     const [rowid, setRowid] = useState()
     ////////////////////        声明状态以获取行行数据 ****
-    
+    const [row, setRow] = useState()
+    console.log('row', row)
 
-    ////////////////////     设置列
+    ////////////////////     设置列    ////////////////////
     const columns = [
         {
-            title: '房型名称',
-            dataIndex: 'name',
-            key: 'name',
+            title: '房间名称',
+            dataIndex: 'roomName',
+            key: 'roomName',
             width: '25%',
-            ...getColumnSearchProps('name'),
+            ...getColumnSearchProps('roomName'),
         },
         {
-            title: '床数量',
-            dataIndex: 'beds',
-            key: 'beds',
+            title: '楼层',
+            dataIndex: 'floor',
+            key: 'floor',
             width: '12.5%',
         },
         {
-            title: '价格',
-            dataIndex: 'price',
-            key: 'price',
+            title: '是否有窗',
+            dataIndex: 'hasWindow',
+            key: 'hasWindow',
             width: '12.5%',
-            ...getColumnSearchProps('price'),
+            render: (_, record) =>
+                <>
+                    <Tag color={record.hasWindow ? 'success' : 'error'}>{record.hasWindow ? '是' : '否'}</Tag>
+                </>
         },
         {
-            title: '押金',
-            dataIndex: 'yaPrice',
-            key: 'yaPrice',
+            title: '靠近马路',
+            dataIndex: 'isClose2Road',
+            key: 'isClose2Road',
             width: '12.5%',
+            render: (_, record) =>
+                <>
+                    <Tag color={record.isClose2Road ? 'success' : 'error'}>{record.isClose2Road ? '是' : '否'}</Tag>
+                </>
         },
         {
-            title: '入住人数',
-            dataIndex: 'liveLimit',
-            key: 'liveLimit',
+            title: '允许吸烟',
+            dataIndex: 'isSmoke',
+            key: 'isSmoke',
             width: '12.5%',
+            render: (_, record) =>
+                <>
+                    <Tag color={record.isSmoke ? 'success' : 'error'}>{record.isSmoke ? '是' : '否'}</Tag>
+                </>
         },
         {
-            title: '早餐券数量',
-            dataIndex: 'couponNum',
-            key: 'couponNum',
+            title: '高温房',
+            dataIndex: 'isHigh',
+            key: 'isHigh',
             width: '12.5%',
+            render: (_, record) =>
+                <>
+                    <Tag color={record.isHigh ? 'success' : 'error'}>{record.isHigh ? '是' : '否'}</Tag>
+                </>
         },
         {
             title: '操作',
@@ -217,9 +282,9 @@ const Room = () => {
             // 通过record参数获取该行数据，详见antd-Table-render API
             render: (_, record) =>
                 <>
-                    <a style={{ marginRight: '15px' }} onClick={()=>{
-                             openEdit()
-                             setRow(record)
+                    <a style={{ marginRight: '15px' }} onClick={() => {
+                        openEdit()
+                        setRow(record)
                     }
                     }>修改</a>
                     <a onClick={() => {
@@ -294,17 +359,17 @@ const Room = () => {
     ///////////////////////////////删除            删除 房型结束             删除///////////////////////////////////
 
     ///////////////////////////////添加            添加 房型开始             添加///////////////////////////////////
-    const reset = ()=>{
-		formRef.current.resetFields();
-	}
+    const reset = () => {
+        formRef.current.resetFields();
+    }
 
-    const dreset = ()=>{
-		editRef.current.resetFields();
-	}
+    const dreset = () => {
+        editRef.current.resetFields();
+    }
     const formRef = useRef(null)
-    const [listadd,setListadd] = useState()
+    const [listadd, setListadd] = useState()
     //console.log('listadd',listadd)
-    const handleAdd  = async ()=>{
+    const handleAdd = async () => {
 
         /////表单验证
         // console.log('current',formRef.current)
@@ -316,7 +381,7 @@ const Room = () => {
         //console.log('values',values)
         let res = await addType(values);
         const { success } = res;
-        if(!success) return message.error('添加失败');
+        if (!success) return message.error('添加失败');
         message.success('添加成功');
         getData(); // 刷新表格
         //formRef.current.reset(); // 重置表单
@@ -326,28 +391,26 @@ const Room = () => {
 
     ///////////////////////////////修改            修改 房型开始             修改///////////////////////////////////
 
-    const [showEdit,setShowEdit] = useState(false);
+    const [showEdit, setShowEdit] = useState(false);
     const editRef = useRef(null);
-    const [row, setRow] = useState()
-    console.log('row',row)
     //const [curRow,setCurRow] = useState(null)
-    const openEdit = async ()=>{
+    const openEdit = async () => {
 
         // 设置 修改表单的内容
         await editRef.current.setFieldsValue(row)
         shModal(); //  让修改抽屉弹出
     }
-    const handleEdit   = async ()=>{
+    const handleEdit = async () => {
         const ok = await editRef.current.validate() // 表单验证 通过的话返回true
-        if(ok !== true) return ;
+        if (ok !== true) return;
         const values = editRef.current.getFieldsValue(true); // 得到所有的表单的值
         // 发送请求执行修改
         let res = await editType({
             ...values,
-            typeid:curRow._id
+            typeid: curRow._id
         });
         const { success } = res;
-        if(!success) return message.error('修改失败');
+        if (!success) return message.error('修改失败');
         message.success('修改成功');
         getData(); // 刷新表格
     }
@@ -362,12 +425,12 @@ const Room = () => {
             <Header title="房型管理" />
 
             {/* ///////////////////////////////            表单布局开始             /////////////////////////////////// */}
-            <Button type='primary' onClick={showDrawer} icon={<PlusOutlined />} style={{ marginBottom: "10px", width: "150px" }}>添加房型</Button>
+            <Button type='primary' onClick={showDrawer} icon={<PlusOutlined />} style={{ marginBottom: "10px", width: "150px" }}>添加房间</Button>
             <Table rowKey="_id" columns={columns} dataSource={data} />
             {/* ///////////////////////////////            表单布局结束             /////////////////////////////////// */}
 
 
-            {/* ///////////////////////////////            添加房型抽屉渲染开始             /////////////////////////////////// */}
+            {/* ///////////////////////////////            添加房间抽屉渲染开始             /////////////////////////////////// */}
             <Drawer
                 title="添加一个新的房间"
                 width={620}
@@ -378,108 +441,190 @@ const Room = () => {
                 }}
                 extra={
                     <Space>
-                        <Button onClick={()=>{
+                        <Button onClick={() => {
                             onClose()
                             reset()
                         }}>取消</Button>
-                        <Button onClick={()=>{
+                        <Button onClick={() => {
                             reset()
                             onClose()
                             handleAdd()
-                            }} type="primary">
+                        }} type="primary">
                             立即添加
                         </Button>
                     </Space>
                 }
             >
                 <Form layout="vertical" hideRequiredMark ref={formRef} /* onFinish={(values)=>console.log('values',values)} */
-                onValuesChange={(changedValues, allValues) =>{
-                    console.log('添加表单',changedValues, allValues)
-                    setListadd(allValues)
-                }
+                    onValuesChange={(changedValues, allValues) => {
+                        console.log('添加表单', changedValues, allValues)
+                        setListadd(allValues)
+                    }
                     }>
 
                     <Row gutter={16}>
                         <Col span={12}>
                             <Form.Item
-                                name="name"
-                                label="房型名称"
+                                name="roomName"
+                                label="房间名称"
                                 rules={[
                                     {
                                         required: true,
-                                        message: '房型名称不能为空',
+                                        message: '房间名称不能为空',
                                     },
                                 ]}
                             >
-                                <Input allowClear={true} placeholder="请输入一个房型名称" />
+                                <Input allowClear={true} placeholder="请输入一个房间名称" />
                             </Form.Item>
                         </Col>
                     </Row>
 
                     <Row gutter={16}>
-                        <Col span={12}>
-                            <Form.Item
-                                name="price"
-                                label="价格"
-                                rules={[
+                        <Form.Item 
+                        name="floor"
+                        label="Cascader"
+                        >
+                            <Cascader
+                                options={[
                                     {
-                                        required: true,
-                                        message: '价格不能为空',
+                                        value: 'zhejiang',
+                                        label: 'Zhejiang',
+                                        children: [
+                                            {
+                                                value: 'hangzhou',
+                                                label: 'Hangzhou',
+                                            },
+                                        ],
                                     },
                                 ]}
-                            >
-                                <Input allowClear={true} placeholder="请输入一个价格" />
-                            </Form.Item>
-                        </Col>
+                            />
+                        </Form.Item>
                     </Row>
 
                     <Row gutter={16}>
-                        <Col span={12}>
-                            <Form.Item
-                                name="yaPrice"
-                                label="押金"
-                            >
-                                <Input allowClear={true} placeholder="请输入押金" />
-                            </Form.Item>
-                        </Col>
+                        <Form.Item 
+                        name=""
+                        label="Select">
+
+                            <Select>
+                                <Select.Option value="demo">Demo</Select.Option>
+                            </Select>
+                        </Form.Item>
                     </Row>
 
                     <Row gutter={16}>
-                        <Col span={12}>
-                            <Form.Item
-                                name="beds"
-                                label="床数量"
-                            >
-                                <InputNumber min={1} max={10} defaultValue={1} style={{ width: '100px' }} />
-                            </Form.Item>
-                        </Col>
+                    <Form.Item
+                            name="radio-button"
+                            label="Radio.Button"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Please pick an item!',
+                                },
+                            ]}
+                        >
+                            <Radio.Group>
+                                <Radio.Button value="a">item 1</Radio.Button>
+                                <Radio.Button value="b">item 2</Radio.Button>
+                                <Radio.Button value="c">item 1</Radio.Button>
+                                <Radio.Button value="d">item 2</Radio.Button>
+                            </Radio.Group>
+                        </Form.Item>
                     </Row>
 
                     <Row gutter={16}>
-                        <Col span={12}>
-                            <Form.Item
-                                name="liveLimit"
-                                label="入住人数"
-                            >
-                                <InputNumber min={1} max={10} defaultValue={1} style={{ width: '100px' }} />
-                            </Form.Item>
-                        </Col>
+                    <Form.Item
+                            name="radio-button"
+                            label="Radio.Button"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Please pick an item!',
+                                },
+                            ]}
+                        >
+                            <Radio.Group>
+                                <Radio.Button value="a">item 1</Radio.Button>
+                                <Radio.Button value="b">item 2</Radio.Button>
+                            </Radio.Group>
+                        </Form.Item>
                     </Row>
 
                     <Row gutter={16}>
-                        <Col span={12}>
-                            <Form.Item
-                                name="couponNum"
-                                label="早餐券数量"
-                            >
-                                <InputNumber min={1} max={10} defaultValue={1} style={{ width: '100px' }} />
-                            </Form.Item>
-                        </Col>
+                    <Form.Item
+                            name="radio-button"
+                            label="Radio.Button"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Please pick an item!',
+                                },
+                            ]}
+                        >
+                            <Radio.Group>
+                                <Radio.Button value="a">item 1</Radio.Button>
+                                <Radio.Button value="b">item 2</Radio.Button>
+                            </Radio.Group>
+                        </Form.Item>
+                    </Row>
+
+                    <Row gutter={16}>
+                    <Form.Item
+                            name="radio-button"
+                            label="Radio.Button"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Please pick an item!',
+                                },
+                            ]}
+                        >
+                            <Radio.Group>
+                                <Radio.Button value="a">item 1</Radio.Button>
+                                <Radio.Button value="b">item 2</Radio.Button>
+                            </Radio.Group>
+                        </Form.Item>
+                    </Row>
+
+                    <Row gutter={16}>
+                    <Form.Item
+                            name="radio-button"
+                            label="Radio.Button"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Please pick an item!',
+                                },
+                            ]}
+                        >
+                            <Radio.Group>
+                                <Radio.Button value="a">item 1</Radio.Button>
+                                <Radio.Button value="b">item 2</Radio.Button>
+                            </Radio.Group>
+                        </Form.Item>
+                    </Row>
+
+                    <Row gutter={16}>
+                        <Form.Item
+                            name="radio-button"
+                            label="Radio.Button"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Please pick an item!',
+                                },
+                            ]}
+                        >
+                            <Radio.Group>
+                                <Radio.Button value="a">item 1</Radio.Button>
+                                <Radio.Button value="b">item 2</Radio.Button>
+                            </Radio.Group>
+                        </Form.Item>
                     </Row>
 
                 </Form>
             </Drawer>
-            {/* ///////////////////////////////            添加房型抽屉渲染结束             /////////////////////////////////// */}
+            {/* ///////////////////////////////            添加房间抽屉渲染结束             /////////////////////////////////// */}
 
 
 
@@ -498,25 +643,25 @@ const Room = () => {
                 }}
                 extra={
                     <Space>
-                        <Button onClick={()=>{
+                        <Button onClick={() => {
                             onClose()
                             dreset()
                         }}>取消</Button>
-                        <Button onClick={()=>{
+                        <Button onClick={() => {
                             dreset()
                             onClose()
                             handleEdit()
-                            }} type="primary">
+                        }} type="primary">
                             立即修改
                         </Button>
                     </Space>
                 }
             >
                 <Form layout="vertical" hideRequiredMark ref={editRef} /* onFinish={(values)=>console.log('values',values)} */
-                onValuesChange={(changedValues, allValues) =>{
-                    console.log('修改表单',changedValues, allValues)
-                    setListadd(allValues)
-                }
+                    onValuesChange={(changedValues, allValues) => {
+                        console.log('修改表单', changedValues, allValues)
+                        setListadd(allValues)
+                    }
                     }>
 
                     <Row gutter={16}>
@@ -621,4 +766,4 @@ const Room = () => {
     );
 };
 
-export default Room;
+export default RoomList;
