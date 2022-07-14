@@ -230,7 +230,6 @@ const Room = () => {
                     }
                     }>删除</a>
                 </>
-
         },
     ];
 
@@ -311,16 +310,16 @@ const Room = () => {
     //console.log('listadd',listadd)
     const handleAdd  = async ()=>{
 
-        /////表单验证
-        // const whether = await formRef.current.validate() // 表单验证 通过的话返回true 
-        // if(whether !== true) return ; 
+        ///表单验证
+        const whether = await listadd// 表单验证 通过的话返回true 
+        if(whether !== true) return message.error('添加失败，请检查数据是否正确'); 
 
         //////添加操作
         const values = listadd; // 得到所有的表单的值
         //console.log('values',values)
         let res = await addType(values);
         const { success } = res;
-        if(!success) return message.error('添加失败');
+        if(!success) return message.error('添加失败，请检查数据是否正确');
         message.success('添加成功');
         getData(); // 刷新表格
     }
@@ -339,8 +338,10 @@ const Room = () => {
         editRef.setFieldsValue({...row})
     }
     const handleEdit   = async ()=>{
-        /* const ok = await editRef.validate() // 表单验证 通过的话返回true
-        if(ok !== true) return ; */
+
+        const ok = listadd // 表单验证 通过的话返回true
+        if(ok !== true) return message.error('修改失败，请检查数据是否正确');
+
         const values = listadd; // 得到所有的表单的值
         //console.log('row',row)
         // 发送请求执行修改
@@ -349,7 +350,7 @@ const Room = () => {
             typeid:row._id
         });
         const { success } = res;
-        if(!success) return message.error('修改失败');
+        if(!success) return message.error('修改失败，请检查数据是否正确');
         message.success('修改成功');
         getData(); // 刷新表格
     }

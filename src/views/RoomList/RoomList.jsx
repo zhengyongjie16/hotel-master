@@ -111,8 +111,8 @@ const RoomList = () => {
 
 
     ///////////////////////////////            表单布局开始             ///////////////////////////////////
-    /////获取数据
-    const data = datalist
+    
+    const data = datalist /////获取数据
 
     const [searchText, setSearchText] = useState('');
     const [searchedColumn, setSearchedColumn] = useState('');
@@ -372,8 +372,11 @@ const RoomList = () => {
     const [listadd,setListadd] = useState()
     
     const handleAdd   = async ()=>{
-        //const okornot = await form.validate() // 表单验证 通过的话返回true
-        //if(okornot !== true) return ;
+        
+        ///表单验证
+        const whether = await listadd// 表单验证 通过的话返回true 
+        if(whether !== true) return message.error('添加失败，请检查数据是否正确'); 
+
         const values = listadd; // 得到所有的表单的值
         const { bandf , ...postData} = values;
         const [ buildId, floor ] = bandf;
@@ -383,7 +386,7 @@ const RoomList = () => {
             buildId
         });
         const { success } = res;
-        if(!success) return message.error('添加失败');
+        if(!success) return message.error('添加失败，请检查数据是否正确');
         message.success('添加成功');
         getData(); // 刷新表格
     }
@@ -404,6 +407,9 @@ const RoomList = () => {
         })       
     }
     const handleEdit   = async ()=>{
+        const ok = listadd // 表单验证 通过的话返回true
+        if(ok !== true) return message.error('修改失败，请检查数据是否正确');
+
         const values = listadd; // 得到所有的表单的值
         const { bandf,...postData } = values;
         const [buildId,floor] = bandf;
@@ -415,7 +421,7 @@ const RoomList = () => {
             floor
         });
         const { success } = res;
-        if(!success) return message.error('修改失败');
+        if(!success) return message.error('修改失败，请检查数据是否正确');
         message.success('修改成功');
         getData(); // 刷新表格
     }
