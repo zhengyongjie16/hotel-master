@@ -5,9 +5,10 @@ import 'antd/dist/antd.css';
 import './Room.css';
 import { SearchOutlined } from '@ant-design/icons';
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, Input, Space, Table, Col, DatePicker, Drawer, Form, Row, Select, InputNumber, Modal, message } from 'antd';
+import { Button, Input, Space, Table, Col, Drawer, Form, Row, Select, InputNumber, Modal, message } from 'antd';
 
 import Highlighter from 'react-highlight-words';
+import { useForm } from "antd/lib/form/Form";
 const { Option } = Select;
 
 
@@ -295,13 +296,16 @@ const Room = () => {
 
     ///////////////////////////////添加            添加 房型开始             添加///////////////////////////////////
     const reset = ()=>{
-		formRef.current.resetFields();
+		form.resetFields();
 	}
 
     const dreset = ()=>{
-		editRef.current.resetFields();
+		editRef.resetFields();
 	}
-    const formRef = useRef(null)
+    
+    //const formRef = useRef(null)
+
+    const [form] = Form.useForm()
     const [listadd,setListadd] = useState()
     //console.log('listadd',listadd)
     const handleAdd  = async ()=>{
@@ -326,21 +330,20 @@ const Room = () => {
 
     ///////////////////////////////修改            修改 房型开始             修改///////////////////////////////////
 
-    const [showEdit,setShowEdit] = useState(false);
-    const editRef = useRef(null);
+    const [editRef] = Form.useForm();
     const [row, setRow] = useState()
     console.log('row',row)
     //const [curRow,setCurRow] = useState(null)
     const openEdit = async ()=>{
 
-        // 设置 修改表单的内容
-        await editRef.current.setFieldsValue(row)
+        //// 设置 修改表单的内容
+        await editRef.setFieldsValue(row)
         shModal(); //  让修改抽屉弹出
     }
     const handleEdit   = async ()=>{
-        const ok = await editRef.current.validate() // 表单验证 通过的话返回true
+        const ok = await editRef.validate() // 表单验证 通过的话返回true
         if(ok !== true) return ;
-        const values = editRef.current.getFieldsValue(true); // 得到所有的表单的值
+        const values = editRef.getFieldsValue(true); // 得到所有的表单的值
         // 发送请求执行修改
         let res = await editType({
             ...values,
@@ -392,7 +395,7 @@ const Room = () => {
                     </Space>
                 }
             >
-                <Form layout="vertical" hideRequiredMark ref={formRef} /* onFinish={(values)=>console.log('values',values)} */
+                <Form layout="vertical" hideRequiredMark form={form} /* onFinish={(values)=>console.log('values',values)} */
                 onValuesChange={(changedValues, allValues) =>{
                     console.log('添加表单',changedValues, allValues)
                     setListadd(allValues)
@@ -512,7 +515,7 @@ const Room = () => {
                     </Space>
                 }
             >
-                <Form layout="vertical" hideRequiredMark ref={editRef} /* onFinish={(values)=>console.log('values',values)} */
+                <Form layout="vertical" hideRequiredMark form={editRef} /* onFinish={(values)=>console.log('values',values)} */
                 onValuesChange={(changedValues, allValues) =>{
                     console.log('修改表单',changedValues, allValues)
                     setListadd(allValues)

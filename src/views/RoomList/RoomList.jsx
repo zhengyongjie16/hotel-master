@@ -22,7 +22,7 @@ import {
     message,
     Tag,
     Cascader,
-    Radio
+    Radio,
 } from 'antd';
 
 import Highlighter from 'react-highlight-words';
@@ -55,7 +55,7 @@ const RoomList = () => {
     const [type, setType] = useState([]);
     const getTypes = async () => {
         const res = await getAllType({ limit: 2000 });
-        setType(res.data.map(item => ({ label: item.name, value: item._id })))
+        setType(res.data.map(item => ({ value: item.name })))
     }
     useEffect(() => {
         getTypes();  // 获取全部的房型信息
@@ -350,7 +350,7 @@ const RoomList = () => {
 
     ///////////////////////////////删除            删除 房型开始             删除///////////////////////////////////
     const confirmDel = async (id) => {
-        let res = await delType({ typeid: id });
+        let res = await delRoom({ roomid: id });
         const { success } = res;
         if (!success) return message.error('删除失败')
         message.success('删除成功');
@@ -360,32 +360,33 @@ const RoomList = () => {
 
     ///////////////////////////////添加            添加 房型开始             添加///////////////////////////////////
     const reset = () => {
-        formRef.current.resetFields();
+        form.resetFields();
     }
 
     const dreset = () => {
         editRef.current.resetFields();
     }
-    const formRef = useRef(null)
-    const [listadd, setListadd] = useState()
-    //console.log('listadd',listadd)
-    const handleAdd = async () => {
-
-        /////表单验证
-        // console.log('current',formRef.current)
-        // const whether = await formRef.current.validate() // 表单验证 通过的话返回true 
-        // if(whether !== true) return ; 
-
-        //////添加操作
-        const values = listadd; // 得到所有的表单的值
-        //console.log('values',values)
-        let res = await addType(values);
+     
+    const [form] = Form.useForm()
+    const [listadd,setListadd] = useState()
+    
+    const handleAdd   = async ()=>{
+        //const okornot = await form.validate() // 表单验证 通过的话返回true
+        //if(okornot !== true) return ;
+        const values = form.getFieldsValue(true); // 得到所有的表单的值
+        const { bandf , ...postData} = values;
+        const [ buildId, floor ] = bandf;
+        let res = await addRoom({
+            ...postData,
+            floor,
+            buildId
+        });
         const { success } = res;
-        if (!success) return message.error('添加失败');
+        if(!success) return message.error('添加失败');
         message.success('添加成功');
         getData(); // 刷新表格
-        //formRef.current.reset(); // 重置表单
     }
+
     ///////////////////////////////添加            添加 房型结束            添加///////////////////////////////////
 
 
@@ -455,7 +456,7 @@ const RoomList = () => {
                     </Space>
                 }
             >
-                <Form layout="vertical" hideRequiredMark ref={formRef} /* onFinish={(values)=>console.log('values',values)} */
+                <Form layout="vertical" hideRequiredMark form={form} /* onFinish={(values)=>console.log('values',values)} */
                     onValuesChange={(changedValues, allValues) => {
                         console.log('添加表单', changedValues, allValues)
                         setListadd(allValues)
@@ -480,146 +481,158 @@ const RoomList = () => {
                     </Row>
 
                     <Row gutter={16}>
+                    <Col span={12}>
                         <Form.Item 
                         name="floor"
-                        label="Cascader"
+                        label="所在楼栋楼层"
+                        rules={[
+                            {
+                                required: true,
+                                message: '楼栋楼层不能为空',
+                            },
+                        ]}
                         >
                             <Cascader
-                                options={[
-                                    {
-                                        value: 'zhejiang',
-                                        label: 'Zhejiang',
-                                        children: [
-                                            {
-                                                value: 'hangzhou',
-                                                label: 'Hangzhou',
-                                            },
-                                        ],
-                                    },
-                                ]}
+                                options={build}
                             />
                         </Form.Item>
+                        </Col>
                     </Row>
 
                     <Row gutter={16}>
+                    <Col span={12}>
                         <Form.Item 
-                        name=""
-                        label="Select">
+                        name="type"
+                        label="选择房型"
+                        rules={[
+                            {
+                                required: true,
+                                message: '房型不能为空',
+                            },
+                        ]}
+                        >
 
                             <Select>
-                                <Select.Option value="demo">Demo</Select.Option>
+                                <Select options={type} value="demo"></Select>
                             </Select>
                         </Form.Item>
+                        </Col>
                     </Row>
 
                     <Row gutter={16}>
+                    <Col span={12}>
                     <Form.Item
-                            name="radio-button"
-                            label="Radio.Button"
+                            name="direction"
+                            label="方向朝向"
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Please pick an item!',
+                                    message: '请选择',
                                 },
                             ]}
                         >
                             <Radio.Group>
-                                <Radio.Button value="a">item 1</Radio.Button>
-                                <Radio.Button value="b">item 2</Radio.Button>
-                                <Radio.Button value="c">item 1</Radio.Button>
-                                <Radio.Button value="d">item 2</Radio.Button>
+                                <Radio.Button value="1">东</Radio.Button>
+                                <Radio.Button value="2">西</Radio.Button>
+                                <Radio.Button value="3">南</Radio.Button>
+                                <Radio.Button value="4">北</Radio.Button>
                             </Radio.Group>
                         </Form.Item>
+                        </Col>
                     </Row>
 
                     <Row gutter={16}>
+                    <Col span={12}>
                     <Form.Item
-                            name="radio-button"
-                            label="Radio.Button"
+                            name="hasWindow"
+                            label="是否有窗户"
+                        >
+                            <Radio.Group>
+                                <Radio.Button value={true}>是</Radio.Button>
+                                <Radio.Button value={false}>否</Radio.Button>
+                            </Radio.Group>
+                        </Form.Item>
+                        </Col>
+                    </Row>
+
+                    <Row gutter={16}>
+                    <Col span={12}>
+                    <Form.Item
+                            name="isClose2Road"
+                            label="是否靠近马路"
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Please pick an item!',
+                                    message: '请选择',
                                 },
                             ]}
                         >
                             <Radio.Group>
-                                <Radio.Button value="a">item 1</Radio.Button>
-                                <Radio.Button value="b">item 2</Radio.Button>
+                                <Radio.Button value={true}>是</Radio.Button>
+                                <Radio.Button value={false}>否</Radio.Button>
                             </Radio.Group>
                         </Form.Item>
+                        </Col>
                     </Row>
 
                     <Row gutter={16}>
+                    <Col span={12}>
                     <Form.Item
-                            name="radio-button"
-                            label="Radio.Button"
+                            name="isSmoke"
+                            label="是否允许吸烟"
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Please pick an item!',
+                                    message: '请选择',
                                 },
                             ]}
                         >
                             <Radio.Group>
-                                <Radio.Button value="a">item 1</Radio.Button>
-                                <Radio.Button value="b">item 2</Radio.Button>
+                                <Radio.Button value={true}>是</Radio.Button>
+                                <Radio.Button value={false}>否</Radio.Button>
                             </Radio.Group>
                         </Form.Item>
+                        </Col>
                     </Row>
 
                     <Row gutter={16}>
+                    <Col span={12}>
                     <Form.Item
-                            name="radio-button"
-                            label="Radio.Button"
+                            name="isNoise"
+                            label="是否是噪音房"
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Please pick an item!',
+                                    message: '请选择',
                                 },
                             ]}
                         >
                             <Radio.Group>
-                                <Radio.Button value="a">item 1</Radio.Button>
-                                <Radio.Button value="b">item 2</Radio.Button>
+                                <Radio.Button value={true}>是</Radio.Button>
+                                <Radio.Button value={false}>否</Radio.Button>
                             </Radio.Group>
                         </Form.Item>
+                        </Col>
                     </Row>
 
                     <Row gutter={16}>
-                    <Form.Item
-                            name="radio-button"
-                            label="Radio.Button"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Please pick an item!',
-                                },
-                            ]}
-                        >
-                            <Radio.Group>
-                                <Radio.Button value="a">item 1</Radio.Button>
-                                <Radio.Button value="b">item 2</Radio.Button>
-                            </Radio.Group>
-                        </Form.Item>
-                    </Row>
-
-                    <Row gutter={16}>
+                    <Col span={12}>
                         <Form.Item
-                            name="radio-button"
-                            label="Radio.Button"
+                            name="isHigh"
+                            label="是否是高温房"
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Please pick an item!',
+                                    message: '请选择',
                                 },
                             ]}
                         >
                             <Radio.Group>
-                                <Radio.Button value="a">item 1</Radio.Button>
-                                <Radio.Button value="b">item 2</Radio.Button>
+                                <Radio.Button value={true}>是</Radio.Button>
+                                <Radio.Button value={false}>否</Radio.Button>
                             </Radio.Group>
                         </Form.Item>
+                        </Col>
                     </Row>
 
                 </Form>
