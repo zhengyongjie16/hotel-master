@@ -215,12 +215,13 @@ const Room = () => {
             dataIndex: 'action',
             key: 'x',
             width: '12.5%',
+
             // 通过record参数获取该行数据，详见antd-Table-render API
             render: (_, record) =>
                 <>
                     <a style={{ marginRight: '15px' }} onClick={()=>{
-                             openEdit()
-                             setRow(record)
+                        setRow(record) // 异步的
+                        openEdit(record)                                                                    
                     }
                     }>修改</a>
                     <a onClick={() => {
@@ -234,7 +235,7 @@ const Room = () => {
     ];
 
 
-    //console.log(rowid)
+
     ///////////////////////////////              表单布局结束               ///////////////////////////////////
 
 
@@ -311,7 +312,6 @@ const Room = () => {
     const handleAdd  = async ()=>{
 
         /////表单验证
-        // console.log('current',formRef.current)
         // const whether = await formRef.current.validate() // 表单验证 通过的话返回true 
         // if(whether !== true) return ; 
 
@@ -323,7 +323,6 @@ const Room = () => {
         if(!success) return message.error('添加失败');
         message.success('添加成功');
         getData(); // 刷新表格
-        //formRef.current.reset(); // 重置表单
     }
     ///////////////////////////////添加            添加 房型结束            添加///////////////////////////////////
 
@@ -331,23 +330,23 @@ const Room = () => {
     ///////////////////////////////修改            修改 房型开始             修改///////////////////////////////////
 
     const [editRef] = Form.useForm();
-    const [row, setRow] = useState()
-    console.log('row',row)
-    //const [curRow,setCurRow] = useState(null)
-    const openEdit = async ()=>{
+    const [row, setRow] = useState();
 
-        //// 设置 修改表单的内容
-        await editRef.setFieldsValue(row)
+    //const [curRow,setCurRow] = useState(null)
+    const openEdit =  (row)=>{
         shModal(); //  让修改抽屉弹出
+        // 设置 修改表单的内容
+        editRef.setFieldsValue({...row})
     }
     const handleEdit   = async ()=>{
-        const ok = await editRef.validate() // 表单验证 通过的话返回true
-        if(ok !== true) return ;
-        const values = editRef.getFieldsValue(true); // 得到所有的表单的值
+        /* const ok = await editRef.validate() // 表单验证 通过的话返回true
+        if(ok !== true) return ; */
+        const values = listadd; // 得到所有的表单的值
+        //console.log('row',row)
         // 发送请求执行修改
         let res = await editType({
             ...values,
-            typeid:curRow._id
+            typeid:row._id
         });
         const { success } = res;
         if(!success) return message.error('修改失败');
@@ -362,7 +361,7 @@ const Room = () => {
 
     return (
         <>
-            <Header title="房型管理" />
+            <Header title="房型维护" />
 
             {/* ///////////////////////////////            表单布局开始             /////////////////////////////////// */}
             <Button type='primary' onClick={showDrawer} icon={<PlusOutlined />} style={{ marginBottom: "10px", width: "150px" }}>添加房型</Button>

@@ -283,8 +283,8 @@ const RoomList = () => {
             render: (_, record) =>
                 <>
                     <a style={{ marginRight: '15px' }} onClick={() => {
-                        openEdit()
                         setRow(record)
+                        openEdit(record)                        
                     }
                     }>修改</a>
                     <a onClick={() => {
@@ -348,7 +348,7 @@ const RoomList = () => {
 
 
 
-    ///////////////////////////////删除            删除 房型开始             删除///////////////////////////////////
+    ///////////////////////////////删除            删除 房间开始             删除///////////////////////////////////
     const confirmDel = async (id) => {
         let res = await delRoom({ roomid: id });
         const { success } = res;
@@ -356,15 +356,16 @@ const RoomList = () => {
         message.success('删除成功');
         getData();
     }
-    ///////////////////////////////删除            删除 房型结束             删除///////////////////////////////////
+    ///////////////////////////////删除            删除 房间结束             删除///////////////////////////////////
 
-    ///////////////////////////////添加            添加 房型开始             添加///////////////////////////////////
+
+    ///////////////////////////////添加            添加 房间开始             添加///////////////////////////////////
     const reset = () => {
         form.resetFields();
     }
 
     const dreset = () => {
-        editRef.current.resetFields();
+        editRef.resetFields();
     }
      
     const [form] = Form.useForm()
@@ -373,7 +374,7 @@ const RoomList = () => {
     const handleAdd   = async ()=>{
         //const okornot = await form.validate() // 表单验证 通过的话返回true
         //if(okornot !== true) return ;
-        const values = form.getFieldsValue(true); // 得到所有的表单的值
+        const values = listadd; // 得到所有的表单的值
         const { bandf , ...postData} = values;
         const [ buildId, floor ] = bandf;
         let res = await addRoom({
@@ -387,43 +388,47 @@ const RoomList = () => {
         getData(); // 刷新表格
     }
 
-    ///////////////////////////////添加            添加 房型结束            添加///////////////////////////////////
+    ///////////////////////////////添加            添加 房间结束            添加///////////////////////////////////
 
 
-    ///////////////////////////////修改            修改 房型开始             修改///////////////////////////////////
+    ///////////////////////////////修改            修改 房间开始             修改///////////////////////////////////
 
-    const [showEdit, setShowEdit] = useState(false);
-    const editRef = useRef(null);
-    //const [curRow,setCurRow] = useState(null)
-    const openEdit = async () => {
-
-        // 设置 修改表单的内容
-        await editRef.current.setFieldsValue(row)
+    const [editRef] = Form.useForm();
+    const openEdit = (row)=>{
+        console.log('row',row)     
         shModal(); //  让修改抽屉弹出
+        // 设置 修改表单的内容
+        editRef.setFieldsValue({
+            ...row,
+            bandf:[row.buildId,row.floor]
+        })       
     }
-    const handleEdit = async () => {
-        const ok = await editRef.current.validate() // 表单验证 通过的话返回true
-        if (ok !== true) return;
-        const values = editRef.current.getFieldsValue(true); // 得到所有的表单的值
+    const handleEdit   = async ()=>{
+        const values = listadd; // 得到所有的表单的值
+        const { bandf,...postData } = values;
+        const [buildId,floor] = bandf;
         // 发送请求执行修改
-        let res = await editType({
-            ...values,
-            typeid: curRow._id
+        let res = await editRoom({
+            ...postData,
+            roomid:row._id,
+            buildId, 
+            floor
         });
         const { success } = res;
-        if (!success) return message.error('修改失败');
+        if(!success) return message.error('修改失败');
         message.success('修改成功');
         getData(); // 刷新表格
     }
 
-    ///////////////////////////////修改            修改 房型结束            修改///////////////////////////////////
+
+    ///////////////////////////////修改            修改 房间结束            修改///////////////////////////////////
 
 
 
 
     return (
         <>
-            <Header title="房型管理" />
+            <Header title="房间管理" />
 
             {/* ///////////////////////////////            表单布局开始             /////////////////////////////////// */}
             <Button type='primary' onClick={showDrawer} icon={<PlusOutlined />} style={{ marginBottom: "10px", width: "150px" }}>添加房间</Button>
@@ -483,8 +488,9 @@ const RoomList = () => {
                     <Row gutter={16}>
                     <Col span={12}>
                         <Form.Item 
-                        name="floor"
+                        name="bandf"
                         label="所在楼栋楼层"
+                        hasFeedback
                         rules={[
                             {
                                 required: true,
@@ -504,6 +510,7 @@ const RoomList = () => {
                         <Form.Item 
                         name="type"
                         label="选择房型"
+                        hasFeedback
                         rules={[
                             {
                                 required: true,
@@ -647,7 +654,7 @@ const RoomList = () => {
 
             {/* ///////////////////////////////            修改房型抽屉渲染开始             /////////////////////////////////// */}
             <Drawer
-                title="修改该房型"
+                title="修改该房间"
                 width={620}
                 onClose={onClose}
                 visible={vi}
@@ -670,9 +677,9 @@ const RoomList = () => {
                     </Space>
                 }
             >
-                <Form layout="vertical" hideRequiredMark ref={editRef} /* onFinish={(values)=>console.log('values',values)} */
+                <Form layout="vertical" hideRequiredMark form={editRef} /* onFinish={(values)=>console.log('values',values)} */
                     onValuesChange={(changedValues, allValues) => {
-                        console.log('修改表单', changedValues, allValues)
+                        console.log('添加表单', changedValues, allValues)
                         setListadd(allValues)
                     }
                     }>
@@ -680,78 +687,174 @@ const RoomList = () => {
                     <Row gutter={16}>
                         <Col span={12}>
                             <Form.Item
-                                name="name"
-                                label="房型名称"
+                                name="roomName"
+                                label="房间名称"
                                 rules={[
                                     {
                                         required: true,
-                                        message: '房型名称不能为空',
+                                        message: '房间名称不能为空',
                                     },
                                 ]}
                             >
-                                <Input allowClear={true} placeholder="请输入一个房型名称" />
+                                <Input allowClear={true} placeholder="请输入一个房间名称" />
                             </Form.Item>
                         </Col>
                     </Row>
 
                     <Row gutter={16}>
-                        <Col span={12}>
-                            <Form.Item
-                                name="price"
-                                label="价格"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: '价格不能为空',
-                                    },
-                                ]}
-                            >
-                                <Input allowClear={true} placeholder="请输入一个价格" />
-                            </Form.Item>
+                    <Col span={12}>
+                        <Form.Item 
+                        name="bandf"
+                        label="所在楼栋楼层"
+                        hasFeedback
+                        rules={[
+                            {
+                                required: true,
+                                message: '楼栋楼层不能为空',
+                            },
+                        ]}
+                        >
+                            <Cascader
+                                options={build}
+                            />
+                        </Form.Item>
                         </Col>
                     </Row>
 
                     <Row gutter={16}>
-                        <Col span={12}>
-                            <Form.Item
-                                name="yaPrice"
-                                label="押金"
-                            >
-                                <Input allowClear={true} placeholder="请输入押金" />
-                            </Form.Item>
+                    <Col span={12}>
+                        <Form.Item 
+                        name="type"
+                        label="选择房型"
+                        hasFeedback
+                        rules={[
+                            {
+                                required: true,
+                                message: '房型不能为空',
+                            },
+                        ]}
+                        >
+
+                            <Select>
+                                <Select options={type} value="demo"></Select>
+                            </Select>
+                        </Form.Item>
                         </Col>
                     </Row>
 
                     <Row gutter={16}>
-                        <Col span={12}>
-                            <Form.Item
-                                name="beds"
-                                label="床数量"
-                            >
-                                <InputNumber min={1} max={10} defaultValue={1} style={{ width: '100px' }} />
-                            </Form.Item>
+                    <Col span={12}>
+                    <Form.Item
+                            name="direction"
+                            label="方向朝向"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: '请选择',
+                                },
+                            ]}
+                        >
+                            <Radio.Group>
+                                <Radio.Button value="1">东</Radio.Button>
+                                <Radio.Button value="2">西</Radio.Button>
+                                <Radio.Button value="3">南</Radio.Button>
+                                <Radio.Button value="4">北</Radio.Button>
+                            </Radio.Group>
+                        </Form.Item>
                         </Col>
                     </Row>
 
                     <Row gutter={16}>
-                        <Col span={12}>
-                            <Form.Item
-                                name="liveLimit"
-                                label="入住人数"
-                            >
-                                <InputNumber min={1} max={10} defaultValue={1} style={{ width: '100px' }} />
-                            </Form.Item>
+                    <Col span={12}>
+                    <Form.Item
+                            name="hasWindow"
+                            label="是否有窗户"
+                        >
+                            <Radio.Group>
+                                <Radio.Button value={true}>是</Radio.Button>
+                                <Radio.Button value={false}>否</Radio.Button>
+                            </Radio.Group>
+                        </Form.Item>
                         </Col>
                     </Row>
 
                     <Row gutter={16}>
-                        <Col span={12}>
-                            <Form.Item
-                                name="couponNum"
-                                label="早餐券数量"
-                            >
-                                <InputNumber min={1} max={10} defaultValue={1} style={{ width: '100px' }} />
-                            </Form.Item>
+                    <Col span={12}>
+                    <Form.Item
+                            name="isClose2Road"
+                            label="是否靠近马路"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: '请选择',
+                                },
+                            ]}
+                        >
+                            <Radio.Group>
+                                <Radio.Button value={true}>是</Radio.Button>
+                                <Radio.Button value={false}>否</Radio.Button>
+                            </Radio.Group>
+                        </Form.Item>
+                        </Col>
+                    </Row>
+
+                    <Row gutter={16}>
+                    <Col span={12}>
+                    <Form.Item
+                            name="isSmoke"
+                            label="是否允许吸烟"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: '请选择',
+                                },
+                            ]}
+                        >
+                            <Radio.Group>
+                                <Radio.Button value={true}>是</Radio.Button>
+                                <Radio.Button value={false}>否</Radio.Button>
+                            </Radio.Group>
+                        </Form.Item>
+                        </Col>
+                    </Row>
+
+                    <Row gutter={16}>
+                    <Col span={12}>
+                    <Form.Item
+                            name="isNoise"
+                            label="是否是噪音房"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: '请选择',
+                                },
+                            ]}
+                        >
+                            <Radio.Group>
+                                <Radio.Button value={true}>是</Radio.Button>
+                                <Radio.Button value={false}>否</Radio.Button>
+                            </Radio.Group>
+                        </Form.Item>
+                        </Col>
+                    </Row>
+
+                    <Row gutter={16}>
+                    <Col span={12}>
+                        <Form.Item
+                            name="isHigh"
+                            label="是否是高温房"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: '请选择',
+                                },
+                            ]}
+                        >
+                            <Radio.Group>
+                                <Radio.Button value={true}>是</Radio.Button>
+                                <Radio.Button value={false}>否</Radio.Button>
+                            </Radio.Group>
+                        </Form.Item>
                         </Col>
                     </Row>
 

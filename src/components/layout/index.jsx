@@ -4,11 +4,11 @@ import './index.css';
 import { NavLink as Link } from 'react-router-dom';
 
 import {
-  DesktopOutlined,
-  FileOutlined,
   PieChartOutlined,
-  TeamOutlined,
   UserOutlined,
+  BarChartOutlined,
+  RadarChartOutlined,
+  HeatMapOutlined
 } from '@ant-design/icons';
 import { Breadcrumb, Layout, Menu } from 'antd';
 import {Outlet,useNavigate} from 'react-router-dom';
@@ -19,8 +19,7 @@ function getItem(label, key, icon, children) {
     key,
     icon,
     children,
-    label,
-    
+    label,    
   };
 }
 
@@ -44,14 +43,17 @@ const items = [
       {
         label:<Link to="/setbuild">楼栋管理</Link>,
         key:'3',
+        icon:<BarChartOutlined />
       },
       {
         label:<Link to="/setroom">房型维护</Link>,
         key:'4',
+        icon:<RadarChartOutlined />
       },
       {
         label:<Link to="/roomlist">房间管理</Link>,
         key:'5',
+        icon:<HeatMapOutlined />
       },
     ]
   }
@@ -104,7 +106,7 @@ const Container = () => {
             textAlign: 'center',
           }}
         >
-          Ant Design ©2018 Created by Ant UED
+          牛马酒店管理系统 ©2022 Created by Urus
         </Footer>
       </Layout>
     </Layout>
