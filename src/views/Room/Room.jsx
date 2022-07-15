@@ -33,7 +33,6 @@ const Room = () => {
         };
     }
 
-    //console.log('data',data)
 
     // 条件过滤
     const [name, setName] = useState('');
