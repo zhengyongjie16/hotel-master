@@ -210,7 +210,7 @@ const Build = () => {
     ////////////////// 修改楼层的状态声明
     const [hide, setHide] = useState(true);
 
-    //////////////////          修改提示窗         //////////////////
+    ///////////////////          修改提示窗         ///////////////////
     const openNotification = () => {
         notification.open({
             message: '编辑楼层提示',
