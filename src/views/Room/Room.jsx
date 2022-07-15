@@ -190,6 +190,9 @@ const Room = () => {
             dataIndex: 'price',
             key: 'price',
             width: '12.5%',
+            sorter: {
+                compare: (a, b) => a.price - b.price, 
+              },
             ...getColumnSearchProps('price'),
         },
         {
@@ -197,6 +200,9 @@ const Room = () => {
             dataIndex: 'yaPrice',
             key: 'yaPrice',
             width: '12.5%',
+            sorter: {
+                compare: (a, b) => a.yaPrice - b.yaPrice, 
+              },
         },
         {
             title: '入住人数',
@@ -263,15 +269,10 @@ const Room = () => {
 
     ///////////////////  修改弹出层相关控制状态开始
     const [vi, setVi] = useState(false);
-    //const [vis, setVis] = useState(false);
 
     const shModal = () => {
         setVi(true);
     };
-
-    /* const stDel = () => {
-        setVis(true)
-    } */
 
     const handOk = () => {
         setVi(false);
@@ -311,8 +312,8 @@ const Room = () => {
     const handleAdd  = async ()=>{
 
         ///表单验证
-        const whether = await listadd// 表单验证 通过的话返回true 
-        if(whether !== true) return message.error('添加失败，请检查数据是否正确'); 
+        //const whether = await listadd// 表单验证 通过的话返回true 
+        //if(whether !== true) return message.error('添加失败，请检查数据是否正确'); 
 
         //////添加操作
         const values = listadd; // 得到所有的表单的值
@@ -333,9 +334,8 @@ const Room = () => {
 
     //const [curRow,setCurRow] = useState(null)
     const openEdit =  (row)=>{
-        shModal(); //  让修改抽屉弹出
-        // 设置 修改表单的内容
-        editRef.setFieldsValue({...row})
+        shModal();                        //  让修改抽屉弹出
+        editRef.setFieldsValue({...row})  // 设置 修改表单的内容
     }
     const handleEdit   = async ()=>{
 
@@ -343,7 +343,6 @@ const Room = () => {
         if(ok !== true) return message.error('修改失败，请检查数据是否正确');
 
         const values = listadd; // 得到所有的表单的值
-        //console.log('row',row)
         // 发送请求执行修改
         let res = await editType({
             ...values,

@@ -298,7 +298,6 @@ const RoomList = () => {
     ];
 
 
-    //console.log(rowid)
     ///////////////////////////////              表单布局结束               ///////////////////////////////////
 
 
@@ -374,8 +373,9 @@ const RoomList = () => {
     const handleAdd   = async ()=>{
         
         ///表单验证
-        const whether = await listadd// 表单验证 通过的话返回true 
-        if(whether !== true) return message.error('添加失败，请检查数据是否正确'); 
+        //console.log('listadd',listadd)
+        //const whether = await listadd// 表单验证 通过的话返回true 
+        //if(whether !== true) return message.error('添加失败，请检查数据是否正确'); 
 
         const values = listadd; // 得到所有的表单的值
         const { bandf , ...postData} = values;
@@ -398,7 +398,7 @@ const RoomList = () => {
 
     const [editRef] = Form.useForm();
     const openEdit = (row)=>{
-        console.log('row',row)     
+        //console.log('row',row)     
         shModal(); //  让修改抽屉弹出
         // 设置 修改表单的内容
         editRef.setFieldsValue({
