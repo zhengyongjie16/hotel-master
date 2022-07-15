@@ -4,9 +4,8 @@ import { getAllType, addType, delType, editType } from '../../api/roomType';
 import 'antd/dist/antd.css';
 import './Room.css';
 import { SearchOutlined } from '@ant-design/icons';
-import { PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined,EditOutlined,DeleteOutlined } from '@ant-design/icons';
 import { Button, Input, Space, Table, Col, Drawer, Form, Row, Select, InputNumber, Modal, message } from 'antd';
-
 import Highlighter from 'react-highlight-words';
 import { useForm } from "antd/lib/form/Form";
 const { Option } = Select;
@@ -182,13 +181,13 @@ const Room = () => {
             title: '床数量',
             dataIndex: 'beds',
             key: 'beds',
-            width: '12.5%',
+            width: '11%',
         },
         {
             title: '价格',
             dataIndex: 'price',
             key: 'price',
-            width: '12.5%',
+            width: '11%',
             sorter: {
                 compare: (a, b) => a.price - b.price, 
               },
@@ -198,7 +197,7 @@ const Room = () => {
             title: '押金',
             dataIndex: 'yaPrice',
             key: 'yaPrice',
-            width: '12.5%',
+            width: '11%',
             sorter: {
                 compare: (a, b) => a.yaPrice - b.yaPrice, 
               },
@@ -207,33 +206,38 @@ const Room = () => {
             title: '入住人数',
             dataIndex: 'liveLimit',
             key: 'liveLimit',
-            width: '12.5%',
+            width: '11%',
         },
         {
             title: '早餐券数量',
             dataIndex: 'couponNum',
             key: 'couponNum',
-            width: '12.5%',
+            width: '11%',
         },
         {
             title: '操作',
             dataIndex: 'action',
             key: 'x',
-            width: '12.5%',
+            width: '30%',
 
             // 通过record参数获取该行数据，详见antd-Table-render API
             render: (_, record) =>
                 <>
-                    <a style={{ marginRight: '15px' }} onClick={()=>{
+                    <Button
+                    icon={<EditOutlined/>} 
+                    style={{ marginRight: '15px',color:'#1890ff' }} onClick={()=>{
                         setRow(record) // 异步的
                         openEdit(record)                                                                    
                     }
-                    }>修改</a>
-                    <a onClick={() => {
+                    }>修改</Button>
+                    <Button 
+                    icon={<DeleteOutlined />}
+                    style={{ color:'red' }}
+                    onClick={() => {
                         setRowid(record._id)
                         showModal()
                     }
-                    }>删除</a>
+                    }>删除</Button>
                 </>
         },
     ];

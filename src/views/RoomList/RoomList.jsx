@@ -6,7 +6,7 @@ import { getAllType } from "../../api/roomType";
 import 'antd/dist/antd.css';
 import './RoomList.css';
 import { SearchOutlined } from '@ant-design/icons';
-import { PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined,CheckCircleOutlined, CloseCircleOutlined,EditOutlined,DeleteOutlined } from '@ant-design/icons';
 import {
     Button,
     Input,
@@ -23,6 +23,7 @@ import {
     Tag,
     Cascader,
     Radio,
+    
 } from 'antd';
 
 import Highlighter from 'react-highlight-words';
@@ -232,66 +233,84 @@ const RoomList = () => {
             title: '楼层',
             dataIndex: 'floor',
             key: 'floor',
-            width: '12.5%',
+            width: '11%',
         },
         {
             title: '是否有窗',
             dataIndex: 'hasWindow',
             key: 'hasWindow',
-            width: '12.5%',
+            width: '11%',
             render: (_, record) =>
                 <>
-                    <Tag color={record.hasWindow ? 'success' : 'error'}>{record.hasWindow ? '是' : '否'}</Tag>
+                    <Tag 
+                    color={record.hasWindow ? 'success' : 'error'}
+                    icon={record.hasWindow ? <CheckCircleOutlined />:<CloseCircleOutlined />}
+                    >{record.hasWindow ? '是' : '否'}</Tag>
                 </>
         },
         {
             title: '靠近马路',
             dataIndex: 'isClose2Road',
             key: 'isClose2Road',
-            width: '12.5%',
+            width: '11%',
             render: (_, record) =>
                 <>
-                    <Tag color={record.isClose2Road ? 'success' : 'error'}>{record.isClose2Road ? '是' : '否'}</Tag>
+                    <Tag 
+                    color={record.isClose2Road ? 'success' : 'error'}
+                    icon={record.isClose2Road ? <CheckCircleOutlined />:<CloseCircleOutlined />}
+                    >{record.isClose2Road ? '是' : '否'}</Tag>
                 </>
         },
         {
             title: '允许吸烟',
             dataIndex: 'isSmoke',
             key: 'isSmoke',
-            width: '12.5%',
+            width: '11%',
             render: (_, record) =>
                 <>
-                    <Tag color={record.isSmoke ? 'success' : 'error'}>{record.isSmoke ? '是' : '否'}</Tag>
+                     <Tag 
+                    color={record.isSmoke ? 'success' : 'error'}
+                    icon={record.isSmoke ? <CheckCircleOutlined />:<CloseCircleOutlined />}
+                    >{record.isSmoke ? '是' : '否'}</Tag>
                 </>
         },
         {
             title: '高温房',
             dataIndex: 'isHigh',
             key: 'isHigh',
-            width: '12.5%',
+            width: '11%',
             render: (_, record) =>
                 <>
-                    <Tag color={record.isHigh ? 'success' : 'error'}>{record.isHigh ? '是' : '否'}</Tag>
+                    <Tag 
+                    color={record.isHigh ? 'success' : 'error'}
+                    icon={record.isHigh ? <CheckCircleOutlined />:<CloseCircleOutlined />}
+                    >{record.isHigh ? '是' : '否'}</Tag>
                 </>
         },
         {
             title: '操作',
             dataIndex: 'action',
             key: 'x',
-            width: '12.5%',
+            width: '30%',
             // 通过record参数获取该行数据，详见antd-Table-render API
             render: (_, record) =>
                 <>
-                    <a style={{ marginRight: '15px' }} onClick={() => {
+                    <Button 
+                    icon={<EditOutlined/>}
+                    style={{ marginRight: '15px',color:'#1890ff' }} 
+                    onClick={() => {
                         setRow(record)
                         openEdit(record)                        
                     }
-                    }>修改</a>
-                    <a onClick={() => {
+                    }>修改</Button>
+                    <Button 
+                    icon={<DeleteOutlined />}
+                    style={{ color:'red' }} 
+                    onClick={() => {
                         setRowid(record._id)
                         showModal()
                     }
-                    }>删除</a>
+                    }>删除</Button>
                 </>
 
         },

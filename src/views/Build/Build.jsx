@@ -1,6 +1,7 @@
 import { addBuild as _addBuild, getAllBuild, delBuild, editBuild } from '../../api/build'
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Button, Modal, Input, notification, message } from 'antd';
+import { PlusOutlined, EditOutlined, DeleteOutlined, HomeOutlined } from '@ant-design/icons';
 import 'antd/dist/antd.css';
 import _ from 'lodash'  // 国际惯例 一般使用lodash的库 引入的变量名是 _
 import './Build.scss'
@@ -74,8 +75,9 @@ const Build = () => {
     // 添加楼层的逻辑  start 
     const fref = useRef(null);
     const addFloor = async () => {
-        const floorname = fref.current.value+"层";
-        if (!floorname) return message.warning('楼层名称不能为空');
+        const floorname = fref.current.value + "层";
+        if (!fref.current.value) return message.warning('楼层名称不能为空');
+
         // 追加新的楼层名称到  当前的楼栋的floorInfo数组当中
         //   curBuild.floorInfo.push(floorname)
         const res = await editBuild({
@@ -105,57 +107,60 @@ const Build = () => {
 
 
 
-      // 编辑楼层的逻辑 start
+    // 编辑楼层的逻辑 start
 
-      const editFloor = async (index)=>{
-        const val =  floor;
+    const editFloor = async (index) => {
+        console.log('floor', floor)
+        if (!floor) return message.warning('楼层不能为空')
+        const val = floor + "层";
         const newFloorInfo = curBuild.floorInfo;
         newFloorInfo[index] = val;
 
+
         const res = await editBuild({
             buildid: curBuild._id,
             floorInfo: newFloorInfo,
         })
 
         const { success } = res;
-        if(!success) message.error('修改失败');
+        if (!success) message.error('修改失败');
         message.success('修改成功')
         setCurBuld({
             ...curBuild,
-            floorInfo:newFloorInfo
+            floorInfo: newFloorInfo
         })
 
-        
+
     }
-     // 编辑楼层的逻辑 end
+    // 编辑楼层的逻辑 end
 
 
 
-     // 删除楼层  start
+    // 删除楼层  start
 
-     const confirmDelFloor = async (index)=>{
+    const confirmDelFloor = async (index) => {
         const newFloorInfo = curBuild.floorInfo;
-        newFloorInfo.splice(index,1);
+        newFloorInfo.splice(index, 1);
         const res = await editBuild({
             buildid: curBuild._id,
             floorInfo: newFloorInfo,
         })
 
         const { success } = res;
-        if(!success) message.error('删除失败');
+        if (!success) message.error('删除失败');
         message.success('删除成功')
         setCurBuld({
             ...curBuild,
-            floorInfo:newFloorInfo
+            floorInfo: newFloorInfo
         })
 
-     }
+    }
 
-     const delFloor = (index)=>{  
-                confirmDelFloor(index); // 执行删除
-     }
+    const delFloor = (index) => {
+        confirmDelFloor(index); // 执行删除
+    }
 
-     // 删除楼层  end
+    // 删除楼层  end
 
 
 
@@ -168,7 +173,7 @@ const Build = () => {
         setVisible(true);
     };
 
-    const stDel = () =>{
+    const stDel = () => {
         setVis(true)
     }
 
@@ -210,13 +215,14 @@ const Build = () => {
 
     return (
         <>
-          <Header title='楼栋楼层管理'/>
+            <Header title='楼栋楼层管理' />
             <div className="howmuch" style={{ marginBottom: "20px", fontSize: "20px" }}> 一共有 <span style={{ color: 'blue' }}>{total}</span> 栋楼</div>
             <div className="buildList">
                 {
                     buildList.map(item => (
                         <Button
-                            style={{ marginRight: '20px', width: '100px', marginBottom: '20PX' }}
+                            icon={<HomeOutlined />}
+                            style={{ marginRight: '20px', width: '140px', marginBottom: '20PX' }}
                             size="large"
                             key={item.id}
                             onClick={() => {
@@ -228,22 +234,47 @@ const Build = () => {
                         </Button>
                     ))
                 }
-                {<Button shape="round" type='primary' onClick={showAdd}>添加楼栋</Button>}
+                {<Button icon={<PlusOutlined />} shape="round" type='primary' onClick={showAdd}>添加楼栋</Button>}
 
 
                 {/* 楼栋的基本信息 */}
                 <div style={{ fontSize: '20px' }}>
-                    当前楼栋：<span style={{ color: 'blue' }}>{curBuild.name}</span> 共 <span style={{ color: 'blue' }}>{curBuild.floorInfo ? curBuild.floorInfo.length : 0}</span> 层 
-                    <Button shape="round" size="small" style={{ marginLeft: '15px' }} type='primary' onClick={() => {                       
-                        hide == true? message.warning('没选楼栋你搁这他妈谁知道你要修改啥啊'):setShowEditBox(true)
+                    当前楼栋：
+                    <span
+                        style={{ 
+                            color: 'blue',
+                            marginRight:'20px' 
+                            }}>
+                        {curBuild.name ? curBuild.name : '未选择楼栋'}
+                    </span>
+                    共
+                    <span style={{ 
+                        color: 'blue',
+                        }}>
+                        {curBuild.floorInfo ? curBuild.floorInfo.length : 0}
+                    </span> 层
+                    <Button
+                        icon={<EditOutlined />}
+                        shape="round"
+                        size="small"
+                        style={{ marginLeft: '15px' }}
+                        type='primary'
+                        onClick={() => {
+                            hide == true ? message.warning('没选楼栋你搁这他妈谁知道你要修改啥啊') : setShowEditBox(true)
                         }}>修改</Button>
-                    <Button shape="round" size="small" style={{ marginLeft: '15px' }} type='primary' onClick={() => {                       
-                        hide == true? message.warning('没选楼栋你搁这他妈谁知道你要删除啥啊'):showDel()
+                    <Button
+                        icon={<DeleteOutlined />}
+                        shape="round"
+                        size="small"
+                        style={{ marginLeft: '15px' }}
+                        type='primary'
+                        onClick={() => {
+                            hide == true ? message.warning('没选楼栋你搁这他妈谁知道你要删除啥啊') : showDel()
                         }}>删除</Button>
                 </div>
 
                 {/******** 指定楼栋的 楼层信息 **********/}
-                <div className={ hide == true? 'hide':'floorList'}>
+                <div className={hide == true ? 'hide' : 'floorList'}>
                     {
                         curBuild.floorInfo?.map((item, index) => (
                             <div key={item} onDoubleClick={ev => {
@@ -252,30 +283,38 @@ const Build = () => {
                                 cur.querySelector('div').classList.toggle('hide');
                                 cur.querySelector('input').value = item;
                             }}>
-                                <div style={{fontSize:"20px"}}> {item} </div>
+                                <div style={{ fontSize: "20px" }}> {item} </div>
                                 <div className="hide editbox" >
-                                    <Input type="text" onChange={(ev)=>{
-                                        setFloor(ev.target.value+"层")}}/>
-                                    <Button onClick={() => {
-                                        //console.log(floor)
-                                        editFloor(index)
-                                    }} style={{height:"100%",marginRight:"5px"}} type="primary">修改</Button>
-                                    <Button onClick={() => {
-                                        delFloor(index)
-                                    }} style={{height:"100%"}} type="primary">删除</Button>
+                                    <input
+                                        type="text" onChange={(ev) => {
+                                            setFloor(ev.target.value)
+                                        }}
+                                    />
+                                    <Button
+                                        icon={<DeleteOutlined />}
+                                        onClick={() => {
+                                            editFloor(index)
+                                        }}
+                                        style={{ height: "100%", marginRight: "5px" }}
+                                        type="primary">修改</Button>
+                                    <Button
+                                        icon={<DeleteOutlined />}
+                                        onClick={() => {
+                                            delFloor(index)
+                                        }} style={{ height: "100%" }} type="primary">删除</Button>
                                 </div>
                             </div>
                         ))
                     }
 
-              
-                        <Input ref={fref} placeholder="请填写楼层名称" style={{
-                            width:"200px",
-                            marginBottom:"2px",
-                            marginTop:"5px",
-                            border:"2px solid #1890ff"
-                            }}/>
-                        <Button type="primary" onClick={addFloor} style={{width:"200px"}}>立即添加楼层</Button>
+
+                    <input ref={fref} placeholder="请填写楼层名称" style={{
+                        width: "200px",
+                        marginBottom: "2px",
+                        marginTop: "5px",
+                        border: "2px solid #1890ff"
+                    }} />
+                    <Button type="primary" onClick={addFloor} style={{ width: "200px" }}>立即添加楼层</Button>
                 </div>
 
 
