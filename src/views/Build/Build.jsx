@@ -335,6 +335,8 @@ const Build = () => {
                 <Modal
                     title="警告"
                     visible={visible}
+                    cancelText='取消'
+                    okText="立即删除"
                     onOk={() => {
                         handleOk()
                         confirmDel()
