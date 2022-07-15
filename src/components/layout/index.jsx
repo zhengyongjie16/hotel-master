@@ -4,11 +4,11 @@ import './index.css';
 import { NavLink as Link } from 'react-router-dom';
 
 import {
-  PieChartOutlined,
   UserOutlined,
   BarChartOutlined,
   RadarChartOutlined,
-  HeatMapOutlined
+  HeatMapOutlined,
+  GithubOutlined
 } from '@ant-design/icons';
 import { Breadcrumb, Button, Layout, Menu,notification } from 'antd';
 import {Outlet,useNavigate} from 'react-router-dom';
@@ -23,14 +23,14 @@ function getItem(label, key, icon, children) {
   };
 }
 
-const openNotification = (placement) => {
+/* const openNotification = (placement) => {
   notification.info({
     message: `系统提示`,
     description:
       '首页仍在维护中',
     placement,
   });
-};
+}; */
 
 const items = [
 /*   getItem('首页 ', '1',<PieChartOutlined />,),
@@ -40,9 +40,9 @@ const items = [
   ]), */
 
   {
-    label:<Link to="/home" onClick={openNotification('top')}>首页</Link>,
+    label:<Link to="/home" /* onClick={openNotification('top')} */>首页</Link>,
     key:'1',
-    icon:<PieChartOutlined />
+    icon:<GithubOutlined />
   },
   
   {

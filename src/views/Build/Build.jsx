@@ -155,9 +155,6 @@ const Build = () => {
 
     }
 
-    const delFloor = (index) => {
-        confirmDelFloor(index); // 执行删除
-    }
 
     // 删除楼层  end
 
@@ -167,6 +164,7 @@ const Build = () => {
     ///////////////////删除弹出层相关开始
     const [visible, setVisible] = useState(false);
     const [vis, setVis] = useState(false);
+    const [floordel,setFloordel] = useState()
 
     const showModal = () => {
         setVisible(true);
@@ -229,6 +227,7 @@ const Build = () => {
                     }}
                 />
             ),
+            duration: 5,
         });
     };
 
@@ -342,7 +341,8 @@ const Build = () => {
                                         size='small'
                                         icon={<DeleteOutlined />}
                                         onClick={() => {
-                                            delFloor(index)
+                                            showDel()
+                                            setFloordel(index)
                                         }} style={{ height: "39px", marginRight: "5px" }} type="primary">删除</Button>
                                     <Button
                                         size='small'
@@ -445,7 +445,7 @@ const Build = () => {
                     okText="立即删除"
                     onOk={() => {
                         handleOk()
-                        confirmDel()
+                        confirmDelFloor(floordel)
                     }}
                     onCancel={handleCancel}
                 >
