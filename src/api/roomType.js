@@ -18,7 +18,7 @@ export const getAllType = async (data)=>{
 export const delType = async (data)=>{
     let res = await $api.post('/roomtype/del',data)
     return res.data;
-}
+}//
 
 // 修改
 

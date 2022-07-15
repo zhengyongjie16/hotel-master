@@ -41,8 +41,8 @@ const frameIn = [
 
 const Router = ()=>{
 
-    // 允许我们通过一个数组的方式来进行路由的配置
-    // 通过这种方式  能更好的让我们进行模块化的开发 灵活的进行路由 配置
+    //// 允许我们通过一个数组的方式来进行路由的配置
+    //// 通过这种方式  能更好的让我们进行模块化的开发 灵活的进行路由 配置
   let element = useRoutes([
     ...frameOut,
     { path: '/', element: <Navigate to="/index" /> }, // 进入到首页的话 就重定向到 /index

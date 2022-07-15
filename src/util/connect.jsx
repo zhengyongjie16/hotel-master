@@ -6,7 +6,7 @@ import store from '../store/index'  // 得到一个redux的store对象
 
 
 const connect = (m2p)=>{
-    // m2p => (state)=>({...state})
+    /// m2p => (state)=>({...state})
     // m2p 这个函数  是形如 state=>返回一个对象  的格式
 
     const hoc = (Cp1)=>{

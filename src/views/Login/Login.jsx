@@ -12,7 +12,7 @@ import { setAdminInfo } from '../../store/adminSlice'
 class  Login  extends Component {
 
     onFinish = async (values) => {
-        console.log('Success:', values);
+        console.log('Success:', values);//
 
         let res = await loginAdmin(values)
         

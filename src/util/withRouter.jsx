@@ -3,7 +3,7 @@
 
 import {  useLocation,useParams ,useNavigate} from 'react-router-dom'
 
-// 因为在我们的v6版本当中 官方不在支持class组件获取参数 
+/// 因为在我们的v6版本当中 官方不在支持class组件获取参数 
 // 需要我们手动的实现一个 withRouter的高阶组件
 
 const withRouter = (Cp)=>{

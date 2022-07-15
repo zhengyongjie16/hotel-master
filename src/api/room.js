@@ -18,7 +18,7 @@ export const getAllRoom = async (data)=>{
 export const delRoom = async (data)=>{
     let res = await $api.post('/room/del',data)
     return res.data;
-}
+}//
 
 // 修改
 

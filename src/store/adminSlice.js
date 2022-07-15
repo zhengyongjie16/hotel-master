@@ -16,7 +16,7 @@ export const adminSlice = createSlice({
   },
 })
 
-// Action creators are generated for each case reducer function
+//// Action creators are generated for each case reducer function
 // 根据reducer里面声明的函数生成对应的同名的action Createor 
 export const { setAdminInfo  } = adminSlice.actions
 

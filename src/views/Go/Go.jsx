@@ -10,7 +10,7 @@ const Go = ()=>{
           
             gotoLogin();
             
-            // 记得清除定时器
+            /// 记得清除定时器
             return ()=>{
                 clearInterval(timer)
             }

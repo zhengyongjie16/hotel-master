@@ -14,7 +14,7 @@ export const commomSlice = createSlice({
     setMenu(state,action){
         state.menu =  action.payload;
     },
-    // setCurMenu(state,action){
+    //// setCurMenu(state,action){
     //    state.curMenu = action.payload
     // }
   },

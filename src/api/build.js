@@ -18,7 +18,7 @@ export const getAllBuild = async (data)=>{
 export const delBuild = async (data)=>{
     let res = await $api.post('/build/del',data)
     return res.data;
-}
+}//
 
 // 修改楼栋信息
 

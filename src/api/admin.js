@@ -11,5 +11,5 @@ export const  addAdmin = async (data)=>{
 export const loginAdmin = async (data)=>{
     let res = await $api.post('/admin/login',data)
     return res.data;
-}
+}//
 
