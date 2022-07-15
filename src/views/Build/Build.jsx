@@ -314,8 +314,11 @@ const Build = () => {
                                         }} style={{ height: "100%",marginRight: "5px" }} type="primary">删除</Button>
                                         <Button
                                         icon={<DeleteOutlined />}
-                                        onClick={() => {
-                                            
+                                        onClick={(ev) => {
+                                        const cur = ev.currentTarget; 
+                                         //console.log(1111,cur.parentElement.previousSibling)
+                                        cur.parentElement.classList.toggle('hide')
+                                        cur.parentElement.previousSibling.classList.remove('hide')
                                         }} style={{ height: "100%" }} type="primary">取消</Button>
                                 </div>
                             </div>
