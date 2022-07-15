@@ -245,7 +245,7 @@ const Build = () => {
                             color: 'blue',
                             marginRight:'20px' 
                             }}>
-                        {curBuild.name ? curBuild.name : '选择楼栋以进行编辑'}
+                        {curBuild.name ? curBuild.name : '选择楼栋进行编辑'}
                     </span>
                     共
                     <span style={{ 
@@ -275,7 +275,7 @@ const Build = () => {
 
                 {/******** 指定楼栋的 楼层信息 **********/}
                 <div className={hide == true ? 'hide' : 'floorList'}>
-                    <span style={{marginBottom:"10px",color:"green"}}>双击楼层可进行编辑（自动获取焦），失去焦点后取消操作</span>
+                    {/* <span style={{marginBottom:"10px",color:"green"}}>双击楼层可进行编辑（自动获取焦），失去焦点后取消操作</span> */}
                     {
                         curBuild.floorInfo?.map((item, index) => (
                             <div key={item} onDoubleClick={ev => {
@@ -289,13 +289,13 @@ const Build = () => {
                                 <div style={{ fontSize: "20px" }}> {item} </div>
                                 <div className="hide editbox" >
                                     <Input
-                                    defaultValue="输入修改内容"
-                                    onBlur={ev => {
-                                        const cur = ev.currentTarget; //
-                                        //console.log(1111,cur.parentElement.previousSibling)
-                                        cur.parentElement.classList.toggle('hide')
-                                        cur.parentElement.previousSibling.classList.remove('hide')
-                                    }}
+                                    // defaultValue="输入修改内容"
+                                    // onBlur={ev => {
+                                    //     const cur = ev.currentTarget; //
+                                    //     //console.log(1111,cur.parentElement.previousSibling)
+                                    //     cur.parentElement.classList.toggle('hide')
+                                    //     cur.parentElement.previousSibling.classList.remove('hide')
+                                    // }}
                                         type="text" onChange={(ev) => {
                                             setFloor(ev.target.value)
                                         }}
@@ -311,7 +311,12 @@ const Build = () => {
                                         icon={<DeleteOutlined />}
                                         onClick={() => {
                                             delFloor(index)
-                                        }} style={{ height: "100%" }} type="primary">删除</Button>
+                                        }} style={{ height: "100%",marginRight: "5px" }} type="primary">删除</Button>
+                                        <Button
+                                        icon={<DeleteOutlined />}
+                                        onClick={() => {
+                                            
+                                        }} style={{ height: "100%" }} type="primary">取消</Button>
                                 </div>
                             </div>
                         ))
