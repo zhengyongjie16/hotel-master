@@ -245,7 +245,7 @@ const Build = () => {
                             color: 'blue',
                             marginRight:'20px' 
                             }}>
-                        {curBuild.name ? curBuild.name : '未选择楼栋'}
+                        {curBuild.name ? curBuild.name : '选择楼栋以进行编辑'}
                     </span>
                     共
                     <span style={{ 
@@ -275,6 +275,7 @@ const Build = () => {
 
                 {/******** 指定楼栋的 楼层信息 **********/}
                 <div className={hide == true ? 'hide' : 'floorList'}>
+                    <span style={{marginBottom:"10px",color:"green"}}>双击楼层可进行编辑（自动获取焦），失去焦点后取消操作</span>
                     {
                         curBuild.floorInfo?.map((item, index) => (
                             <div key={item} onDoubleClick={ev => {
@@ -282,10 +283,19 @@ const Build = () => {
                                 cur.querySelector('.editbox').classList.toggle('hide')
                                 cur.querySelector('div').classList.toggle('hide');
                                 cur.querySelector('input').value = item;
+                                cur.querySelector('input').focus()
+                                console.log(22222,cur.querySelector('div'))
                             }}>
                                 <div style={{ fontSize: "20px" }}> {item} </div>
                                 <div className="hide editbox" >
-                                    <input
+                                    <Input
+                                    defaultValue="输入修改内容"
+                                    onBlur={ev => {
+                                        const cur = ev.currentTarget; //
+                                        //console.log(1111,cur.parentElement.previousSibling)
+                                        cur.parentElement.classList.toggle('hide')
+                                        cur.parentElement.previousSibling.classList.remove('hide')
+                                    }}
                                         type="text" onChange={(ev) => {
                                             setFloor(ev.target.value)
                                         }}
@@ -308,7 +318,7 @@ const Build = () => {
                     }
 
 
-                    <input ref={fref} placeholder="请填写楼层名称" style={{
+                    <input ref={fref} placeholder="填写楼层名，只需填入数字" style={{
                         width: "200px",
                         marginBottom: "2px",
                         marginTop: "5px",
