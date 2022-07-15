@@ -1,7 +1,28 @@
-const Home = ()=>{
+import React from 'react';
+import 'antd/dist/antd.css';
+import { Tabs } from 'antd';
+import './Home.scss'
+
+const { TabPane } = Tabs;
+
+
+const Home = () => {
     return (
-        <div style={{fontSize:"110px",color:"red"}}>首页没东西啊，老Baby</div>
+        <Tabs type="card" size="large">
+            <TabPane 
+            tab="Tab one" 
+            key="1"
+            >
+                <div className='background1'></div>
+            </TabPane>
+            <TabPane tab="Tab two" key="2">
+            <div className='background2'></div>
+            </TabPane>
+            <TabPane tab="Tab three" key="3">
+            <div className='background3'></div>
+            </TabPane>
+        </Tabs>
     )
 }
 
-export default Home;//导出
+export default Home;
