@@ -611,6 +611,8 @@ const Room = () => {
             <Modal
                 title="警告"
                 visible={visi}
+                cancelText='取消'
+                    okText="立即删除"
                 onOk={() => {
                     handleOk()
                     confirmDel(rowid)

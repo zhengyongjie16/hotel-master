@@ -74,7 +74,7 @@ const Build = () => {
     // 添加楼层的逻辑  start 
     const fref = useRef(null);
     const addFloor = async () => {
-        const floorname = fref.current.value;
+        const floorname = fref.current.value+"层";
         if (!floorname) return message.warning('楼层名称不能为空');
         // 追加新的楼层名称到  当前的楼栋的floorInfo数组当中
         //   curBuild.floorInfo.push(floorname)
@@ -255,9 +255,9 @@ const Build = () => {
                                 <div style={{fontSize:"20px"}}> {item} </div>
                                 <div className="hide editbox" >
                                     <Input type="text" onChange={(ev)=>{
-                                        setFloor(ev.target.value)}}/>
+                                        setFloor(ev.target.value+"层")}}/>
                                     <Button onClick={() => {
-                                        console.log(floor)
+                                        //console.log(floor)
                                         editFloor(index)
                                     }} style={{height:"100%",marginRight:"5px"}} type="primary">修改</Button>
                                     <Button onClick={() => {
@@ -269,7 +269,12 @@ const Build = () => {
                     }
 
               
-                        <input ref={fref} placeholder="请填写楼层名称" style={{width:"200px",marginBottom:"2px",marginTop:"5px"}}/>
+                        <Input ref={fref} placeholder="请填写楼层名称" style={{
+                            width:"200px",
+                            marginBottom:"2px",
+                            marginTop:"5px",
+                            border:"2px solid #1890ff"
+                            }}/>
                         <Button type="primary" onClick={addFloor} style={{width:"200px"}}>立即添加楼层</Button>
                 </div>
 
@@ -344,6 +349,8 @@ const Build = () => {
                 <Modal
                     title="警告"
                     visible={visible}
+                    cancelText='取消'
+                    okText="立即删除"
                     onOk={() => {
                         handleOk()
                         confirmDel()

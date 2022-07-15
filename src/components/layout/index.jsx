@@ -10,7 +10,7 @@ import {
   RadarChartOutlined,
   HeatMapOutlined
 } from '@ant-design/icons';
-import { Breadcrumb, Layout, Menu } from 'antd';
+import { Breadcrumb, Button, Layout, Menu,notification } from 'antd';
 import {Outlet,useNavigate} from 'react-router-dom';
 const { Header, Content, Footer, Sider } = Layout;
 
@@ -23,6 +23,15 @@ function getItem(label, key, icon, children) {
   };
 }
 
+const openNotification = (placement) => {
+  notification.info({
+    message: `系统提示`,
+    description:
+      '首页仍在维护中',
+    placement,
+  });
+};
+
 const items = [
 /*   getItem('首页 ', '1',<PieChartOutlined />,),
   getItem('设置', 'sub1', <UserOutlined />, [
@@ -31,7 +40,7 @@ const items = [
   ]), */
 
   {
-    label:<Link to="/home">首页</Link>,
+    label:<Link to="/home" onClick={openNotification('top')}>首页</Link>,
     key:'1',
     icon:<PieChartOutlined />
   },

@@ -870,11 +870,13 @@ const RoomList = () => {
 
 
 
-            {/*房型删除 删除确认的对话框 */}
+            {/*房间删除 删除确认的对话框 */}
 
             <Modal
                 title="警告"
                 visible={visi}
+                cancelText='取消'
+                    okText="立即删除"
                 onOk={() => {
                     handleOk()
                     confirmDel(rowid)
