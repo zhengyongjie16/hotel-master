@@ -1,14 +1,12 @@
 import { addBuild as _addBuild, getAllBuild, delBuild, editBuild } from '../../api/build'
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Button, Modal, Input, notification, message } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined, HomeOutlined } from '@ant-design/icons';
+import { PlusOutlined, EditOutlined, DeleteOutlined, HomeOutlined, SmileOutlined, UndoOutlined } from '@ant-design/icons';
 import 'antd/dist/antd.css';
 import _ from 'lodash'  // 国际惯例 一般使用lodash的库 引入的变量名是 _
 import './Build.scss'
 import Header from '../../components/layout/Header';
 import { changeConfirmLocale } from 'antd/lib/modal/locale';
-
-
 
 
 
@@ -110,9 +108,10 @@ const Build = () => {
     // 编辑楼层的逻辑 start
 
     const editFloor = async (index) => {
-        console.log('floor', floor)
+        console.log('curBuild.floorInfo', curBuild.floorInfo[index])
         if (!floor) return message.warning('楼层不能为空')
         const val = floor + "层";
+        if (val == curBuild.floorInfo[index]) return message.warning('修改的楼层不能相同')
         const newFloorInfo = curBuild.floorInfo;
         newFloorInfo[index] = val;
 
@@ -213,10 +212,46 @@ const Build = () => {
     ////////////////// 修改楼层的状态声明
     const [hide, setHide] = useState(true);
 
+    //////////////////          修改提示窗         //////////////////
+    const openNotification = () => {
+        notification.open({
+            message: '编辑楼层提示',
+            description:
+                <>
+                    <p style={{ margin: 0 }}>修改楼层只需填写数字</p>
+                    <p style={{ margin: 0 }}>楼层不能为空且不能与原楼层相同</p>
+                </>,
+            placement: 'topLeft',
+            icon: (
+                <SmileOutlined
+                    style={{
+                        color: '#108ee9',
+                    }}
+                />
+            ),
+        });
+    };
+
     return (
         <>
             <Header title='楼栋楼层管理' />
-            <div className="howmuch" style={{ marginBottom: "20px", fontSize: "20px" }}> 一共有 <span style={{ color: 'blue' }}>{total}</span> 栋楼</div>
+            <div className="howmuch"
+                style={{ marginBottom: "20px", fontSize: "20px" }}>
+                一共有
+                <span style={{ color: '#1890ff' ,marginLeft:"5px",marginRight:"5px"}}
+                >
+                    {total}
+                </span>
+                栋楼
+                {<Button
+                    style={{marginLeft:"20px", width: "150px"}}
+                    icon={<PlusOutlined />}
+                    //shape="round" 
+                    type='primary'
+                    onClick={showAdd}>
+                    添加楼栋
+                </Button>}
+            </div>
             <div className="buildList">
                 {
                     buildList.map(item => (
@@ -234,28 +269,28 @@ const Build = () => {
                         </Button>
                     ))
                 }
-                {<Button icon={<PlusOutlined />} shape="round" type='primary' onClick={showAdd}>添加楼栋</Button>}
 
 
                 {/* 楼栋的基本信息 */}
                 <div style={{ fontSize: '20px' }}>
                     当前楼栋：
                     <span
-                        style={{ 
-                            color: 'blue',
-                            marginRight:'20px' 
-                            }}>
+                        style={{
+                            color: '#1890ff',
+                            marginRight: '20px'
+                        }}>
                         {curBuild.name ? curBuild.name : '选择楼栋进行编辑'}
                     </span>
                     共
-                    <span style={{ 
-                        color: 'blue',
-                        }}>
+                    <span style={{
+                        color: '#1890ff',
+                        marginLeft:"6px"
+                    }}>
                         {curBuild.floorInfo ? curBuild.floorInfo.length : 0}
                     </span> 层
                     <Button
                         icon={<EditOutlined />}
-                        shape="round"
+                        //shape="round"
                         size="small"
                         style={{ marginLeft: '15px' }}
                         type='primary'
@@ -264,7 +299,7 @@ const Build = () => {
                         }}>修改</Button>
                     <Button
                         icon={<DeleteOutlined />}
-                        shape="round"
+                        //shape="round"
                         size="small"
                         style={{ marginLeft: '15px' }}
                         type='primary'
@@ -275,51 +310,49 @@ const Build = () => {
 
                 {/******** 指定楼栋的 楼层信息 **********/}
                 <div className={hide == true ? 'hide' : 'floorList'}>
-                    {/* <span style={{marginBottom:"10px",color:"green"}}>双击楼层可进行编辑（自动获取焦），失去焦点后取消操作</span> */}
+                    <span style={{ marginBottom: "10px", color: "green" }}>双击楼层后进行编辑</span>
                     {
                         curBuild.floorInfo?.map((item, index) => (
                             <div key={item} onDoubleClick={ev => {
+                                openNotification()
                                 const cur = ev.currentTarget; //
-                                cur.querySelector('.editbox').classList.toggle('hide')
-                                cur.querySelector('div').classList.toggle('hide');
+                                cur.querySelector('.editbox').classList.remove('hide')
+                                cur.querySelector('div').classList.add('hide');
                                 cur.querySelector('input').value = item;
                                 cur.querySelector('input').focus()
-                                console.log(22222,cur.querySelector('div'))
+                                console.log(22222, cur.querySelector('div'))
                             }}>
                                 <div style={{ fontSize: "20px" }}> {item} </div>
                                 <div className="hide editbox" >
                                     <Input
-                                    // defaultValue="输入修改内容"
-                                    // onBlur={ev => {
-                                    //     const cur = ev.currentTarget; //
-                                    //     //console.log(1111,cur.parentElement.previousSibling)
-                                    //     cur.parentElement.classList.toggle('hide')
-                                    //     cur.parentElement.previousSibling.classList.remove('hide')
-                                    // }}
+                                        style={{ height: "38px" }}
                                         type="text" onChange={(ev) => {
                                             setFloor(ev.target.value)
                                         }}
                                     />
                                     <Button
-                                        icon={<DeleteOutlined />}
+                                        size='small'
+                                        icon={<EditOutlined />}
                                         onClick={() => {
                                             editFloor(index)
                                         }}
-                                        style={{ height: "100%", marginRight: "5px" }}
+                                        style={{ height: "39px", marginRight: "5px" }}
                                         type="primary">修改</Button>
                                     <Button
+                                        size='small'
                                         icon={<DeleteOutlined />}
                                         onClick={() => {
                                             delFloor(index)
-                                        }} style={{ height: "100%",marginRight: "5px" }} type="primary">删除</Button>
-                                        <Button
-                                        icon={<DeleteOutlined />}
+                                        }} style={{ height: "39px", marginRight: "5px" }} type="primary">删除</Button>
+                                    <Button
+                                        size='small'
+                                        icon={<UndoOutlined />}
                                         onClick={(ev) => {
-                                        const cur = ev.currentTarget; 
-                                         //console.log(1111,cur.parentElement.previousSibling)
-                                        cur.parentElement.classList.toggle('hide')
-                                        cur.parentElement.previousSibling.classList.remove('hide')
-                                        }} style={{ height: "100%" }} type="primary">取消</Button>
+                                            const cur = ev.currentTarget;
+                                            //console.log(1111,cur.parentElement.previousSibling)
+                                            cur.parentElement.classList.toggle('hide')
+                                            cur.parentElement.previousSibling.classList.toggle('hide')
+                                        }} style={{ height: "39px" }} type="primary">取消</Button>
                                 </div>
                             </div>
                         ))
