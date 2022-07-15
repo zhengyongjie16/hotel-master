@@ -13,13 +13,13 @@ const persistConfig = {
     storage,
   }
 
-//// 将迎来的userReducer 使用  persistReducer进行持久化处理
+// 将迎来的userReducer 使用  persistReducer进行持久化处理
 const persistedAdminReducer = persistReducer(persistConfig, adminReducer)
 const persistedCommonReducer = persistReducer(persistConfig, commonReducer)
 
 
 
-//// 在 toolkit当中 使用的是 configureStore来创建 store对象
+// 在 toolkit当中 使用的是 configureStore来创建 store对象
  const store = configureStore({
   reducer: {
     admin:persistedAdminReducer ,
