@@ -433,7 +433,7 @@ const RoomList = () => {
         if(!listadd.roomName) return message.error('修改失败，请检查数据是否正确');
         const { bandf,...postData } = values;
         const [buildId,floor] = bandf;
-        // 发送请求执行修改
+        // 发送请求执行修改 //
         let res = await editRoom({
             ...postData,
             roomid:row._id,
