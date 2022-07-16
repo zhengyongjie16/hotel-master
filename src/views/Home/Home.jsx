@@ -10,15 +10,15 @@ const Home = () => {
     return (
         <Tabs type="card" size="large">
             <TabPane 
-            tab="酒店风景区 one" 
+            tab="酒店位置 one" 
             key="1"
             >
                 <div className='background1'></div>
             </TabPane>
-            <TabPane tab="酒店风景区 two" key="2">
+            <TabPane tab="酒店位置 two" key="2">
             <div className='background2'></div>
             </TabPane>
-            <TabPane tab="酒店风景区 three" key="3">
+            <TabPane tab="酒店位置 three" key="3">
             <div className='background3'></div>
             </TabPane>
         </Tabs>

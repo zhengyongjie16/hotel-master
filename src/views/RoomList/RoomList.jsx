@@ -430,6 +430,7 @@ const RoomList = () => {
         //if(!ok.roomname) return message.error('修改失败，请检查数据是否正确');
 
         const values = listadd; // 得到所有的表单的值
+        if(!listadd.roomName) return message.error('修改失败，请检查数据是否正确');
         const { bandf,...postData } = values;
         const [buildId,floor] = bandf;
         // 发送请求执行修改

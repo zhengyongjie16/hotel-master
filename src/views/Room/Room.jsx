@@ -346,6 +346,8 @@ const Room = () => {
         //if(ok !== true) return message.error('修改失败，请检查数据是否正确');
 
         const values = listadd; // 得到所有的表单的值
+        if(!listadd.name) return message.error('修改失败，请检查数据是否正确');
+
         // 发送请求执行修改
         let res = await editType({
             ...values,
