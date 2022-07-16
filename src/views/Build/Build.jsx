@@ -36,7 +36,9 @@ const Build = () => {
 
     //const _setBuildName = _.debounce((val) => { setBuildName(val) }, 300)
 
+    //添加楼栋
     const addBuild = async () => {
+        if(!buildName) return message.error('楼栋名不能为空');
         let res = await _addBuild({ name: buildName, floorInfo: [] })
         const { success } = res;
         if (!success) return message.error('添加失败', 1.5);
@@ -55,6 +57,7 @@ const Build = () => {
        },[curBuild]) */
 
     const handleEdit = async () => {
+        if(!editName) return message.error('楼栋名不能为空');
         let res = await editBuild({
             buildid: curBuild._id,
             name: editName,
