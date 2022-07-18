@@ -397,6 +397,7 @@ const RoomList = () => {
         //if(whether !== true) return message.error('添加失败，请检查数据是否正确'); 
 
         const values = listadd; // 得到所有的表单的值
+        if(!values) return message.error('添加失败，请检查数据是否正确'); 
         const { bandf , ...postData} = values;
         const [ buildId, floor ] = bandf;
         let res = await addRoom({

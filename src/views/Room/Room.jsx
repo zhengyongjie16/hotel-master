@@ -320,6 +320,7 @@ const Room = () => {
 
         //////添加操作
         const values = listadd; // 得到所有的表单的值
+        if(!values) return message.error('添加失败，请检查数据是否正确'); 
         //console.log('values',values)
         let res = await addType(values);
         const { success } = res;

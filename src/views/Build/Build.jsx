@@ -116,7 +116,7 @@ const Build = () => {
         const val = floor + "层";
         if (val == curBuild.floorInfo[index]) return message.warning('修改的楼层不能相同')
         const newFloorInfo = curBuild.floorInfo;
-        newFloorInfo[index] = val;
+        newFloorInfo[index] = val;0
 
 
         const res = await editBuild({
@@ -189,6 +189,7 @@ const Build = () => {
 
     // 确认删除楼栋
     const confirmDel = async () => {
+        console.log('curBuild._id',curBuild._id)
         let res = await delBuild({
             buildid: curBuild._id
         })
@@ -297,7 +298,7 @@ const Build = () => {
                         style={{ marginLeft: '15px' }}
                         type='primary'
                         onClick={() => {
-                            hide == true ? message.warning('没选楼栋你搁这他妈谁知道你要修改啥啊') : setShowEditBox(true)
+                            hide == true ? message.warning('未选择楼栋，无法修改') : setShowEditBox(true)
                         }}>修改</Button>
                     <Button
                         icon={<DeleteOutlined />}
@@ -306,7 +307,7 @@ const Build = () => {
                         style={{ marginLeft: '15px' }}
                         type='primary'
                         onClick={() => {
-                            hide == true ? message.warning('没选楼栋你搁这他妈谁知道你要删除啥啊') : showDel()
+                            hide == true ? message.warning('未选择楼栋，无法删除') : showDel()
                         }}>删除</Button>
                 </div>
 
