@@ -1,4 +1,4 @@
-react实训项目
+react项目
 # 工具
 
 - axios
